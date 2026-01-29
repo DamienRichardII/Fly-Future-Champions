@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fly Future Champions — Contact</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --blue:#0b2e5f;
+      --blue2:#104a9b;
+      --blue3:#1a6bff;
+      --ice:#eaf3ff;
+      --white:#ffffff;
+
+      --text:#eef6ff;
+      --muted:rgba(238,246,255,.78);
+
+      --glass: rgba(255,255,255,.10);
+      --glass2: rgba(255,255,255,.14);
+      --stroke: rgba(255,255,255,.22);
+
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --shadow2: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 22px;
+      --radius2: 28px;
+      --max: 1180px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 650px at 12% 10%, rgba(26,107,255,.35) 0%, rgba(26,107,255,0) 60%),
+        radial-gradient(900px 520px at 88% 18%, rgba(16,74,155,.28) 0%, rgba(16,74,155,0) 58%),
+        radial-gradient(900px 650px at 50% 100%, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, #061b3a 0%, #0b2e5f 35%, #0a2a55 100%);
+      overflow-x:hidden;
+    }
+
+    /* Court background (white lines) */
+    .court-bg{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.55;
+      background-repeat:no-repeat;
+      background-position:center;
+      background-size:cover;
+      filter: blur(.0px);
+      z-index:0;
+    }
+    .court-bg::before{
+      content:"";
+      position:absolute; inset:-2%;
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%201200%20700%22%3E%0A%20%20%3Cg%20fill=%22none%22%20stroke=%22#FFFFFF%22%20stroke-opacity=%220.32%22%20stroke-width=%222%22%3E%0A%20%20%20%20%3Crect%20x=%2260%22%20y=%2240%22%20width=%221080%22%20height=%22620%22%20rx=%2218%22/%3E%0A%20%20%20%20%3Cline%20x1=%22600%22%20y1=%2240%22%20x2=%22600%22%20y2=%22660%22/%3E%0A%20%20%20%20%3Ccircle%20cx=%22600%22%20cy=%22350%22%20r=%2286%22/%3E%0A%20%20%20%20%3Ccircle%20cx=%22600%22%20cy=%22350%22%20r=%223%22/%3E%0A%20%20%20%20%3C!--%20Left%20hoop%20--%3E%0A%20%20%20%20%3Ccircle%20cx=%22110%22%20cy=%22350%22%20r=%227%22/%3E%0A%20%20%20%20%3Crect%20x=%2260%22%20y=%22320%22%20width=%2240%22%20height=%2260%22/%3E%0A%20%20%20%20%3C!--%20Right%20hoop%20--%3E%0A%20%20%20%20%3Ccircle%20cx=%221090%22%20cy=%22350%22%20r=%227%22/%3E%0A%20%20%20%20%3Crect%20x=%221100%22%20y=%22320%22%20width=%2240%22%20height=%2260%22/%3E%0A%0A%20%20%20%20%3C!--%20Paint%20(keys)%20--%3E%0A%20%20%20%20%3Crect%20x=%2260%22%20y=%22235%22%20width=%22190%22%20height=%22230%22/%3E%0A%20%20%20%20%3Crect%20x=%22950%22%20y=%22235%22%20width=%22190%22%20height=%22230%22/%3E%0A%0A%20%20%20%20%3C!--%20Free%20throw%20circles%20--%3E%0A%20%20%20%20%3Ccircle%20cx=%22250%22%20cy=%22350%22%20r=%2270%22/%3E%0A%20%20%20%20%3Ccircle%20cx=%22950%22%20cy=%22350%22%20r=%2270%22/%3E%0A%0A%20%20%20%20%3C!--%20Restricted%20areas%20--%3E%0A%20%20%20%20%3Cpath%20d=%22M120%20290%20A60%2060%200%200%201%20120%20410%22/%3E%0A%20%20%20%20%3Cpath%20d=%22M1080%20290%20A60%2060%200%200%200%201080%20410%22/%3E%0A%0A%20%20%20%20%3C!--%203pt%20arcs%20--%3E%0A%20%20%20%20%3Cpath%20d=%22M60%20140%20Q260%20350%2060%20560%22/%3E%0A%20%20%20%20%3Cpath%20d=%22M1140%20140%20Q940%20350%201140%20560%22/%3E%0A%0A%20%20%20%20%3C!--%20Corner%203pt%20lines%20--%3E%0A%20%20%20%20%3Cline%20x1=%2260%22%20y1=%22140%22%20x2=%22220%22%20y2=%22140%22/%3E%0A%20%20%20%20%3Cline%20x1=%2260%22%20y1=%22560%22%20x2=%22220%22%20y2=%22560%22/%3E%0A%20%20%20%20%3Cline%20x1=%221140%22%20y1=%22140%22%20x2=%22980%22%20y2=%22140%22/%3E%0A%20%20%20%20%3Cline%20x1=%221140%22%20y1=%22560%22%20x2=%22980%22%20y2=%22560%22/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E");
+      background-repeat:repeat;
+      background-size: 1200px 700px;
+      transform: translate3d(0,0,0);
+      animation: courtDrift 18s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes courtDrift{
+      0%{ transform: translate3d(-40px,-20px,0) scale(1.02); }
+      100%{ transform: translate3d(40px,20px,0) scale(1.02); }
+    }
+
+    /* Soft vignette */
+    .vignette{
+      position:fixed; inset:-20%;
+      pointer-events:none;
+      background:
+        radial-gradient(closest-side at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,.22) 60%, rgba(0,0,0,.42) 100%);
+      z-index:0;
+    }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(6,27,58,.82), rgba(6,27,58,.52));
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .nav{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none; color:var(--text);
+      min-width: 220px;
+    }
+    .brand img{width:48px;height:48px;object-fit:contain;display:block;}
+    .brand .t1{
+      font-weight:800; letter-spacing:.08em;
+      font-size: 12px;
+    }
+    .brand .t2{
+      font-weight:600; opacity:.85;
+      font-size: 12px;
+      margin-top:2px;
+    }
+    .links{
+      display:flex; align-items:center; gap:18px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .links a{
+      color: rgba(238,246,255,.88);
+      text-decoration:none;
+      font-weight:700;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: transform .18s ease, background .18s ease, color .18s ease;
+    }
+    .links a:hover{
+      background: rgba(255,255,255,.10);
+      transform: translateY(-1px);
+    }
+    .links a.active{
+      background: rgba(26,107,255,.22);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .pill{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.08);
+      box-shadow: var(--shadow2);
+      color: rgba(238,246,255,.92);
+      font-weight:800;
+      font-size: 13px;
+      white-space:nowrap;
+    }
+
+    /* Layout */
+    main{
+      position:relative;
+      z-index:2;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px 18px 64px;
+    }
+    .hero{
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 26px;
+      align-items:stretch;
+      min-height: 66vh;
+      margin-top: 18px;
+    }
+
+    /* Huge logo (transparent) */
+    .logo-giant{
+      position:absolute;
+      inset:auto 0 -30px 0;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      opacity:.22;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,.30));
+      z-index:0;
+    }
+    .logo-giant img{
+      width:min(760px, 86vw);
+      height:auto;
+      transform: translateY(10px);
+      animation: floatLogo 7.5s ease-in-out infinite;
+    }
+    @keyframes floatLogo{
+      0%,100%{ transform: translateY(10px) scale(1); }
+      50%{ transform: translateY(0px) scale(1.01); }
+    }
+
+    .card{
+      position:relative;
+      z-index:2;
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(850px 520px at 20% 18%, rgba(26,107,255,.25), rgba(26,107,255,0) 58%),
+                  radial-gradient(600px 380px at 85% 80%, rgba(255,255,255,.10), rgba(255,255,255,0) 55%);
+      pointer-events:none;
+    }
+    .card-inner{
+      position:relative;
+      padding: 26px 24px;
+    }
+    .kicker{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size: 12px;
+      opacity:.92;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 0 0 6px rgba(255,255,255,.10);
+    }
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(38px, 4.8vw, 64px);
+      line-height: .98;
+      letter-spacing:-.03em;
+    }
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height:1.55;
+      max-width: 54ch;
+    }
+
+    .emailRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 16px 16px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.18);
+      margin-top: 14px;
+    }
+    .emailRow .label{
+      font-weight:800;
+      letter-spacing:.08em;
+      font-size: 12px;
+      opacity:.9;
+      text-transform:uppercase;
+    }
+    .emailRow a{
+      color:#ffffff;
+      text-decoration:none;
+      font-weight:800;
+      font-size: 16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .emailRow a:hover{ text-decoration:underline; }
+    .copyBtn{
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.08);
+      color: rgba(238,246,255,.95);
+      font-weight:800;
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor:pointer;
+      transition: transform .16s ease, background .16s ease;
+      white-space:nowrap;
+    }
+    .copyBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+
+    .socials{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 18px;
+    }
+    .sbtn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.08);
+      color: rgba(238,246,255,.95);
+      text-decoration:none;
+      font-weight:800;
+      font-size: 13px;
+      transition: transform .16s ease, background .16s ease;
+    }
+    .sbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+
+    /* Photo panel */
+    .photo{
+      position:relative;
+      z-index:2;
+      border-radius: var(--radius2);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow);
+      background: rgba(0,0,0,.25);
+      transform: translateZ(0);
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.03);
+      filter: contrast(1.06) saturate(1.02);
+      animation: slowZoom 10s ease-in-out infinite;
+    }
+    @keyframes slowZoom{
+      0%,100%{ transform: scale(1.03) translateY(0px); }
+      50%{ transform: scale(1.07) translateY(-6px); }
+    }
+    .photo::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(900px 500px at 30% 25%, rgba(26,107,255,.22), rgba(26,107,255,0) 58%),
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.34));
+      pointer-events:none;
+    }
+
+    /* Footer */
+    footer{
+      max-width: var(--max);
+      margin: 30px auto 0;
+      padding: 12px 18px 28px;
+      color: rgba(238,246,255,.65);
+      font-size: 12px;
+      position:relative;
+      z-index:2;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero{
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .photo{ min-height: 380px; }
+      .brand{ min-width:auto; }
+      .pill{ display:none; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .court-bg::before, .photo img, .logo-giant img{ animation:none !important; }
+      *{ scroll-behavior:auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="court-bg" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="index.html" aria-label="Retour accueil">
+        <img src="assets/logo_header.png" alt="Logo Fly Future Champions">
+        <div>
+          <div class="t1">FLY FUTURE CHAMPIONS</div>
+          <div class="t2">Basketball • Jeunes • Haut niveau</div>
+        </div>
+      </a>
+
+      <nav class="links" aria-label="Navigation">
+        <a href="index.html">Accueil</a>
+        <a href="detections.html">Détections</a>
+        <a href="programmes.html">Programmes</a>
+        <a class="active" href="contact.html">Contact</a>
+      </nav>
+
+      <div class="pill" aria-label="Email">
+        leflyassociation@gmail.com
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="logo-giant" aria-hidden="true">
+        <img src="assets/logo_header.png" alt="">
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="kicker"><span class="dot"></span> Contact</div>
+          <h1>On échange.</h1>
+          <p class="sub">
+            Une question sur les programmes, une détection, ou un projet de haut niveau ?
+            Écris-nous — réponse rapide.
+          </p>
+
+          <div class="emailRow">
+            <div>
+              <div class="label">Email</div>
+              <a href="mailto:leflyassociation@gmail.com" aria-label="Envoyer un email">
+                <!-- tiny inline icon -->
+                <span aria-hidden="true">✉️</span>
+                <span id="emailText">leflyassociation@gmail.com</span>
+              </a>
+            </div>
+            <button class="copyBtn" id="copyBtn" type="button">Copier</button>
+          </div>
+
+          <div class="socials" aria-label="Réseaux sociaux">
+            <a class="sbtn" href="https://www.instagram.com/fly_future_champions?igsh=MTA0NXJhbzdvY3Vy" target="_blank" rel="noopener">Instagram</a>
+            <a class="sbtn" href="https://www.tiktok.com/@leflyassociation?_r=1&_t=ZN-93D6r6lFyTL" target="_blank" rel="noopener">TikTok</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo" aria-label="Photo Fly Future Champions">
+        <img src="assets/contact_photo.jpeg" alt="Fly Future Champions — staff">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Fly Future Champions — Tous droits réservés.
+  </footer>
+
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Copy email
+    const btn = document.getElementById('copyBtn');
+    btn.addEventListener('click', async () => {
+      const email = 'leflyassociation@gmail.com';
+      try{
+        await navigator.clipboard.writeText(email);
+        const old = btn.textContent;
+        btn.textContent = 'Copié ✓';
+        btn.style.transform = 'translateY(-1px)';
+        setTimeout(()=>{ btn.textContent = old; btn.style.transform=''; }, 1200);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = email;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.textContent = 'Copié ✓';
+        setTimeout(()=>{ btn.textContent = old; }, 1200);
+      }
+    });
+  </script>
+</body>
+</html>
