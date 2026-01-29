@@ -733,11 +733,11 @@
 
             <div>
               <label for="firstName">Prénom</label>
-              <input id="firstName" autocomplete="given-name" required placeholder="Ex : Sarah"/>
+              <input id="firstName" name="first_Name" autocomplete="given-name" required placeholder="Ex : Damien"/>
             </div>
             <div>
               <label for="lastName">Nom</label>
-              <input id="lastName" autocomplete="family-name" required placeholder="Ex : Diallo"/>
+              <input id="lastName" name="last_Name" autocomplete="family-name" required placeholder="Ex : Miyouna"/>
             </div>
 
             <div>
@@ -781,7 +781,7 @@
 
             <div>
               <label for="email">Email</label>
-              <input id="email" type="email" autocomplete="email" required placeholder="exemple@mail.com"/>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="exemple@mail.com"/>
             </div>
             <div>
               <label for="phone">Téléphone</label>
@@ -795,12 +795,12 @@
 
             <div class="span2">
               <label for="message">Message (optionnel)</label>
-              <textarea id="message" placeholder="Infos utiles : blessures, expériences, disponibilité, lien vidéo, etc."></textarea>
+              <textarea id="message" name="notes" placeholder="Infos utiles : blessures, expériences, disponibilité, lien vidéo, etc."></textarea>
             </div>
           </div>
 
           <div class="checkbox">
-            <input id="consent" type="checkbox" required />
+            <input id="consent" name="consent" type="checkbox" required />
             <p>
               J'accepte que mes informations soient utilisées pour traiter ma pré-inscription (Fly Future Champions). 
               <a href="#" id="privacyLink">Voir les infos</a>.
@@ -1373,55 +1373,65 @@ age: 'Garçons & Filles',
   }
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const fd = new FormData(form);
-    fd.set('detection_date', getSelectedDate());
+  const get = (id) => (document.getElementById(id)?.value || "").trim();
+  const getInt = (id) => {
+    const x = parseInt(get(id), 10);
+    return Number.isFinite(x) ? x : null;
+  };
 
-    const payload = {};
-    fd.forEach((v,k)=> payload[k]=v);
+  const mapped = {
+    detection_date: getSelectedDate(),
+    first_name: get("prenom") || get("firstName") || get("first_name"),
+    last_name: get("nom") || get("lastName") || get("last_name"),
+    birth_year: getInt("annee") || getInt("birth_year") || getInt("annee_naissance"),
+    gender: get("sexe") || get("gender"),
+    email: get("email"),
+    phone: get("telephone") || get("phone") || get("tel"),
+    city: get("ville") || get("city"),
+    level: get("niveau") || get("level"),
+    position: get("poste") || get("position"),
+    height_cm: getInt("taille") || getInt("height_cm") || getInt("heightCm"),
+    notes: get("notes") || get("message")
+  };
 
-    // Map common fields to expected API keys
-    const mapped = {
-      detection_date: payload.detection_date,
-      first_name: payload.prenom || payload.first_name || payload.firstname || '',
-      last_name: payload.nom || payload.last_name || payload.lastname || '',
-      birth_year: payload.annee || payload.birth_year || payload.annee_naissance || '',
-      gender: payload.sexe || payload.gender || '',
-      email: payload.email || '',
-      phone: payload.telephone || payload.phone || payload.tel || '',
-      city: payload.ville || payload.city || '',
-      level: payload.niveau || payload.level || '',
-      position: payload.poste || payload.position || '',
-      height_cm: payload.taille || payload.height_cm || '',
-      notes: payload.notes || payload.message || ''
-    };
+  console.log("MAPPED =>", mapped);
+alert(JSON.stringify(mapped, null, 2));
 
-    const btn = form.querySelector('button[type="submit"]');
-    if(btn){ btn.disabled=true; btn.dataset._txt=btn.textContent; btn.textContent="Envoi…"; }
+console.log(Object.fromEntries(new FormData(form).entries()));
 
-    try{
-      const resp = await fetch('/api/register-detection', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify(mapped)
-      });
-      const json = await resp.json();
-      if(!resp.ok){
-        alert("Erreur inscription: " + (json.error||resp.status));
-        return;
-      }
-      // success UI (use existing toast if present)
-      if(window.toast){ window.toast("Inscription envoyée ✅"); }
-      else alert("Inscription envoyée ✅");
-      form.reset();
-    }catch(err){
-      alert("Erreur réseau: " + err.message);
-    }finally{
-      if(btn){ btn.disabled=false; btn.textContent=btn.dataset._txt||"Envoyer"; }
+
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.dataset._txt = btn.textContent; btn.textContent = "Envoi…"; }
+
+  try {
+    const resp = await fetch('/api/register-detection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mapped)
+    });
+
+    const json = await resp.json().catch(() => ({}));
+
+    if (!resp.ok) {
+      alert("Erreur inscription: " + (json.error || resp.status));
+      return;
     }
-  }, { passive:false });
-})();
+
+    if (window.toast) window.toast("Inscription envoyée ✅");
+    else alert("Inscription envoyée ✅");
+
+    form.reset();
+
+  } catch (err) {
+    alert("Erreur réseau: " + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset._txt || "Envoyer"; }
+  }
+});
+
+});
 </script>
 </body>
 </html>
