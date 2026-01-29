@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#0B2F55" name="theme-color"/>
+<title>Fly Future Champions</title>
+<meta content="Fly Future Champions — structure de basketball pour accompagner les jeunes vers le haut niveau." name="description"/>
+<!-- Optional font (falls back gracefully if offline) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root{
+      --blue-900:#081E38;
+      --blue-800:#0B2F55;
+      --blue-700:#0F3E73;
+      --blue-600:#14508F;
+      --blue-500:#1C66B5;
+      --white:#FFFFFF;
+      --ink:#0B1320;
+      --muted: rgba(11,19,32,.65);
+      --line: rgba(11,47,85,.12);
+      --shadow: 0 24px 60px rgba(8,30,56,.14);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Montserrat, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 20% 5%, rgba(28,102,181,.12), transparent 70%),
+        radial-gradient(900px 520px at 85% 20%, rgba(11,47,85,.10), transparent 65%),
+        linear-gradient(180deg, #ffffff 0%, #ffffff 45%, rgba(20,80,143,.03) 100%);
+      overflow-x:hidden;
+    }
+
+    /* Subtle animated background lines */
+    .bg-lines{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(to right, var(--line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+      background-size: 110px 110px;
+      mask-image: radial-gradient(900px 520px at 50% 10%, rgba(0,0,0,.65), transparent 70%);
+      opacity:.6;
+      transform: translateZ(0);
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift{
+      0%{ background-position: 0 0, 0 0; }
+      100%{ background-position: 110px 0, 0 110px; }
+    }
+
+
+
+    /* Court background (animated, like other pages) */
+    .court-bg{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-repeat: repeat;
+      background-size: 1150px 650px;
+      background-position: 50% 50%;
+      filter: blur(0.25px);
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1150' height='650' viewBox='0 0 1150 650'%3E%3Cg fill='none' stroke='%231B3A72' stroke-opacity='0.38' stroke-width='3'%3E%3Crect x='20' y='20' width='1110' height='610' rx='26'/%3E%3Cline x1='575' y1='20' x2='575' y2='630'/%3E%3Ccircle cx='575' cy='325' r='92'/%3E%3Cpath d='M20 120H180c80 0 145 65 145 145v120c0 80-65 145-145 145H20'/%3E%3Cpath d='M1130 120H970c-80 0-145 65-145 145v120c0 80 65 145 145 145h160'/%3E%3Crect x='20' y='210' width='190' height='230' rx='16'/%3E%3Crect x='940' y='210' width='190' height='230' rx='16'/%3E%3Ccircle cx='190' cy='325' r='12'/%3E%3Ccircle cx='960' cy='325' r='12'/%3E%3C/g%3E%3Cg fill='none' stroke='%231B3A72' stroke-opacity='0.24' stroke-width='2'%3E%3Ccircle cx='190' cy='325' r='68'/%3E%3Ccircle cx='960' cy='325' r='68'/%3E%3C/g%3E%3C/svg%3E");
+      animation: breath 12s ease-in-out infinite;
+    }
+
+    @keyframes breath{
+      0%,100%{ opacity:0.18; }
+      50%{ opacity:0.28; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .court-bg{ animation: none !important; }
+    }
+    /* Layout */
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,.72);
+      border-bottom: 1px solid rgba(11,47,85,.10);
+    }
+
+    .nav{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .brand img{
+      width:48px;
+      height:auto;
+      display:block;
+      filter: drop-shadow(0 10px 24px rgba(8,30,56,.12));
+    }
+    .brand .name{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+    .brand .name strong{
+      font-weight:800;
+      letter-spacing:.08em;
+      font-size: 12px;
+      color: var(--blue-800);
+      text-transform:uppercase;
+    }
+    .brand .name span{
+      font-weight:600;
+      font-size: 12px;
+      color: rgba(11,19,32,.7);
+    }
+
+    nav a{
+      text-decoration:none;
+      color: rgba(11,19,32,.78);
+      font-weight:600;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: background .2s ease, color .2s ease;
+    }
+    nav a:hover{
+      background: rgba(11,47,85,.06);
+      color: var(--blue-800);
+    }
+
+    .cta{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight:700;
+      font-size: 14px;
+      letter-spacing:.02em;
+      text-decoration:none;
+      border: 1px solid rgba(11,47,85,.20);
+      background: rgba(255,255,255,.85);
+      color: var(--blue-800);
+      box-shadow: 0 16px 40px rgba(8,30,56,.10);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      will-change: transform;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: white;
+      box-shadow: 0 24px 60px rgba(8,30,56,.14);
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 44px 20px 36px;
+    }
+
+    .hero{
+      max-width: 1200px;
+      width:100%;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 36px;
+      align-items:center;
+    }
+
+    .headline{
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+    }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:12px;
+      color: rgba(11,47,85,.78);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--blue-600);
+      box-shadow: 0 0 0 6px rgba(20,80,143,.10);
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(40px, 5vw, 66px);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+      color: var(--blue-900);
+    }
+    h1 .accent{
+      background: linear-gradient(90deg, var(--blue-600), var(--blue-800));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+    }
+
+    .tagline{
+      margin:0;
+      font-size: clamp(16px, 1.35vw, 19px);
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+
+    .micro{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      margin-top: 6px;
+      align-items:center;
+    }
+    .pill{
+      border: 1px solid rgba(11,47,85,.18);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight:700;
+      font-size: 12px;
+      color: rgba(11,47,85,.82);
+      background: rgba(255,255,255,.75);
+    }
+
+    .right{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      position:relative;
+      min-height: 320px;
+    }
+
+    /* A modern, boxless composition (no panels) */
+    .orbit{
+      width:min(420px, 78vw);
+      aspect-ratio: 1/1;
+      position:relative;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(28,102,181,.18), transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(11,47,85,.14), transparent 55%);
+      filter: drop-shadow(0 28px 70px rgba(8,30,56,.14));
+      overflow:hidden;
+    }
+
+    .orbit:before, .orbit:after{
+      content:"";
+      position:absolute;
+      inset:-18%;
+      border-radius: 50%;
+      border: 2px solid rgba(11,47,85,.14);
+      transform: rotate(18deg);
+    }
+    .orbit:after{
+      inset:-35%;
+      border: 2px dashed rgba(20,80,143,.18);
+      transform: rotate(-12deg);
+    }
+
+    .orbit .logo{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 16%;
+    }
+    .orbit .logo img{
+      width: 100%;
+      height: auto;
+      max-width: 340px;
+      transform: translateZ(0);
+      animation: float 4.2s ease-in-out infinite;
+      filter: drop-shadow(0 18px 40px rgba(8,30,56,.18));
+    }
+
+    @keyframes float{
+      0%, 100%{ transform: translateY(0); }
+      50%{ transform: translateY(-10px); }
+    }
+
+    footer{
+      padding: 18px 20px 28px;
+      display:flex;
+      justify-content:center;
+      color: rgba(11,19,32,.55);
+      font-size: 12px;
+    }
+
+    /* Intro animation overlay */
+    .intro{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: opacity .55s ease, visibility .55s ease;
+    }
+    .intro.hidden{
+      opacity:0;
+      visibility:hidden;
+    }
+    canvas#introCanvas{
+      width:100vw;
+      height:100vh;
+      display:block;
+    }
+
+    /* Mobile */
+    @media (max-width: 920px){
+      .hero{
+        grid-template-columns: 1fr;
+        gap: 26px;
+      }
+      .right{ order: -1; }
+      nav{ display:none; }
+      .brand .name span{ display:none; }
+      .btn{ padding: 10px 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .bg-lines{ animation:none; }
+      .orbit .logo img{ animation:none; }
+      .intro{ display:none; }
+    }
+  
+
+.iconbtn{
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(11,47,85,.18);
+      background: rgba(255,255,255,.75);
+      color: rgba(11,47,85,.82);
+      box-shadow: 0 8px 24px rgba(8,28,55,.10);
+      transition: transform .18s ease, background .18s ease;
+    }
+.iconbtn.ballcta{background:rgba(255,255,255,.92);border-color:rgba(120,170,255,.55);color:var(--blue);}
+.iconbtn.ballcta:hover{transform:translateY(-1px) scale(1.02);}
+    .iconbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.9); }
+</style>
+</head>
+<body>
+  <div class="court-bg" aria-hidden="true"></div>
+<div aria-hidden="true" class="bg-lines"></div>
+<!-- Intro animation plays on every load -->
+<div aria-hidden="true" class="intro" id="intro">
+<canvas id="introCanvas"></canvas>
+</div>
+<div class="wrap">
+<header>
+<div class="nav">
+<a aria-label="Fly Future Champions" class="brand" href="./">
+<img alt="Logo Fly Future Champions" src="assets/logo_header.png"/>
+<div class="name">
+<strong>Fly Future Champions</strong>
+<span>Basketball • Jeunes • Haut niveau</span>
+</div>
+</a>
+<nav aria-label="Navigation">
+<a href="index.html">Accueil</a>
+<a href="detections.html">Détections</a>
+<a href="programmes.html">Programmes</a>
+<a href="contact.html">Contact</a>
+</nav>
+<div class="cta">
+<a aria-label="Instagram" class="iconbtn" href="https://www.instagram.com/fly_future_champions?igsh=MTA0NXJhbzdvY3Vy" rel="noopener" target="_blank"><svg aria-hidden="true" focusable="false" height="18" viewbox="0 0 24 24" width="18">
+<path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9A3.5 3.5 0 0 0 20 16.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.6-2.2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z" fill="currentColor"></path>
+</svg></a><a aria-label="TikTok" class="iconbtn" href="https://www.tiktok.com/@leflyassociation?_r=1&amp;_t=ZN-93D6r6lFyTL" rel="noopener" target="_blank"><svg aria-hidden="true" focusable="false" height="18" viewbox="0 0 24 24" width="18">
+<path d="M16.7 3c.9 1.6 2.3 2.7 4.1 2.9v3.1c-1.7 0-3.2-.5-4.6-1.5v6.7c0 4.2-3.4 7.6-7.6 7.6S1 18.4 1 14.2c0-4.1 3.3-7.5 7.4-7.6v3.3c-2.3.1-4.1 2-4.1 4.3 0 2.4 2 4.4 4.4 4.4s4.4-2 4.4-4.4V3h3.6Z" fill="currentColor"></path>
+</svg></a><a aria-label="Aller sur leflyasso.com" class="iconbtn ballcta" href="https://www.leflyasso.com/" rel="noopener" target="_blank"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M12 3v18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M6 6c3 3 3 9 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M18 6c-3 3-3 9 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg></a><a aria-label="S'inscrire à la prochaine détection" class="btn" href="#">Prochaine détection • 22 février</a>
+</div>
+</div>
+</header>
+<main>
+<section class="hero">
+<div class="headline">
+<div class="kicker"><span aria-hidden="true" class="dot"></span> Programme d'accompagnement &amp; développement</div>
+<h1>
+            Ton <span class="accent">passeport</span><br/>
+            vers le haut niveau.
+          </h1>
+<p class="tagline">Fly future champions c'est ton passeport pour le haut niveau !</p>
+<div aria-label="Points clés" class="micro">
+<div class="pill">Régional → National</div>
+<div class="pill">Centre de formation</div>
+<div class="pill">Coaching • Analyse • Mental</div>
+</div>
+</div>
+<div aria-hidden="true" class="right">
+<div class="orbit">
+<div class="logo">
+<img alt="" src="assets/logo.png"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<div>© <span id="year"></span> Fly Future Champions • Bleu &amp; Blanc • Version landing page</div>
+</footer>
+</div>
+<script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Subtle parallax for court background
+    const courtBg = document.querySelector('.court-bg');
+    if (courtBg){
+      window.addEventListener('mousemove', (e)=>{
+        const x = (e.clientX / window.innerWidth - 0.5) * 18;
+        const y = (e.clientY / window.innerHeight - 0.5) * 18;
+        courtBg.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      }, {passive:true});
+    }
+
+
+    // --- Intro animation: blue basketball drops, bounces, then rolls left → right ---
+    (function () {
+      const intro = document.getElementById('intro');
+      const canvas = document.getElementById('introCanvas');
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize, { passive: true });
+
+      const W = () => window.innerWidth;
+      const H = () => window.innerHeight;
+
+      // Ball physics
+      const ball = {
+        r: 36,
+        x: Math.max(80, W() * 0.18),
+        y: -80,
+        vx: 0,
+        vy: 0,
+        spin: 0,
+        w: 0,
+        bounces: 0,
+        phase: 'drop' // drop -> roll -> done
+      };
+
+      const floorMargin = 46;
+      const g = 1800;              // px/s^2
+      const restitution = 0.68;    // bounce energy
+      const friction = 0.995;
+
+      let last = performance.now();
+      let doneAt = null;
+
+      function drawBall(x, y, r, spin) {
+        // subtle background wash
+        ctx.clearRect(0, 0, W(), H());
+
+        // Optional soft vignette
+        const grdBg = ctx.createRadialGradient(W()*0.5, H()*0.4, 40, W()*0.5, H()*0.4, Math.max(W(),H()));
+        grdBg.addColorStop(0, 'rgba(11,47,85,0.06)');
+        grdBg.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grdBg;
+        ctx.fillRect(0,0,W(),H());
+
+        // shadow
+        const floorY = H() - floorMargin;
+        const shadowW = r * 2.1;
+        const shadowH = r * 0.42;
+        const dy = Math.max(0, Math.min(1, (floorY - y) / 320));
+        const alpha = 0.22 * (1 - dy);
+        ctx.save();
+        ctx.translate(x, floorY + r*0.55);
+        ctx.scale(1, 0.65);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, shadowW, shadowH, 0, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(8,30,56,${alpha.toFixed(3)})`;
+        ctx.fill();
+        ctx.restore();
+
+        // ball gradient
+        const grd = ctx.createRadialGradient(x - r*0.35, y - r*0.45, r*0.2, x, y, r*1.25);
+        grd.addColorStop(0, '#2D84E6');
+        grd.addColorStop(0.55, '#14508F');
+        grd.addColorStop(1, '#0B2F55');
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI*2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+
+        // highlight rim
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.stroke();
+
+        // seams
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(spin);
+        ctx.lineWidth = 2.6;
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.beginPath();
+        ctx.arc(0, 0, r*0.78, -Math.PI*0.15, Math.PI*1.15);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, r*0.78, Math.PI*0.85, Math.PI*2.15);
+        ctx.stroke();
+
+        // vertical seam
+        ctx.beginPath();
+        ctx.moveTo(-r*0.15, -r);
+        ctx.bezierCurveTo(-r*0.6, -r*0.35, -r*0.6, r*0.35, -r*0.15, r);
+        ctx.stroke();
+
+        // opposite vertical seam
+        ctx.beginPath();
+        ctx.moveTo(r*0.15, -r);
+        ctx.bezierCurveTo(r*0.6, -r*0.35, r*0.6, r*0.35, r*0.15, r);
+        ctx.stroke();
+
+        ctx.restore();
+
+        // floor line (subtle)
+        ctx.beginPath();
+        ctx.moveTo(0, floorY + r*1.1);
+        ctx.lineTo(W(), floorY + r*1.1);
+        ctx.strokeStyle = 'rgba(11,47,85,0.08)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      function step(now) {
+        const dt = Math.min(0.033, (now - last) / 1000);
+        last = now;
+
+        const floorY = H() - floorMargin;
+
+        if (ball.phase !== 'done') {
+          // Integrate
+          ball.vy += g * dt;
+          ball.x += ball.vx * dt;
+          ball.y += ball.vy * dt;
+
+          // floor collision
+          if (ball.y + ball.r >= floorY) {
+            ball.y = floorY - ball.r;
+
+            if (ball.phase === 'drop') {
+              ball.vy = -ball.vy * restitution;
+              ball.bounces += 1;
+              // add a bit of side impulse on early bounces
+              ball.vx += (ball.bounces === 1 ? 80 : ball.bounces === 2 ? 120 : 0);
+
+              // small squash effect
+              ball.w = Math.min(0.22, Math.abs(ball.vy) / 2800);
+
+              // transition to roll when bounces are done and vertical speed is small
+              if (ball.bounces >= 3 && Math.abs(ball.vy) < 420) {
+                ball.phase = 'roll';
+                ball.vy = 0;
+                ball.vx = Math.max(520, W() * 0.42); // px/s
+              }
+            } else if (ball.phase === 'roll') {
+              ball.vy = 0;
+              ball.vx *= friction;
+              if (ball.vx < 420) ball.vx = 420; // keep it moving
+            }
+          }
+
+          // keep ball from drifting off left
+          if (ball.x < ball.r + 8) {
+            ball.x = ball.r + 8;
+            ball.vx = Math.abs(ball.vx);
+          }
+
+          // spin
+          const spinSpeed = (ball.vx / Math.max(1, ball.r)) * dt;
+          ball.spin += spinSpeed;
+
+          // squash on impact (visual only)
+          if (ball.w > 0) ball.w = Math.max(0, ball.w - dt * 0.8);
+
+          // render
+          ctx.save();
+          if (ball.w > 0) {
+            // squash/stretch around ball center
+            ctx.translate(ball.x, ball.y);
+            ctx.scale(1 + ball.w, 1 - ball.w);
+            ctx.translate(-ball.x, -ball.y);
+          }
+          drawBall(ball.x, ball.y, ball.r, ball.spin);
+          ctx.restore();
+
+          // end condition
+          if (ball.phase === 'roll' && ball.x - ball.r > W() + 20) {
+            ball.phase = 'done';
+            doneAt = now;
+          }
+        }
+
+        // fade out overlay after done
+        if (ball.phase === 'done') {
+          // brief pause then fade
+          if (!doneAt) doneAt = now;
+          const t = (now - doneAt) / 1000;
+          if (t > 0.15) intro.classList.add('hidden');
+          if (t > 0.9) {
+            // stop drawing
+            return;
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      // Kickoff
+      requestAnimationFrame(step);
+    })();
+  </script>
+</body>
+</html>

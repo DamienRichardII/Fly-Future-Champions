@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Programmes — Fly Future Champions</title>
+  <style>
+    :root{
+      --bg:#f7fbff;
+      --card:#ffffffcc;
+      --text:#08152e;
+      --muted:#52637a;
+      --blue:#0b2e5f;
+      --blue2:#104a9b;
+      --line:#8bb7ff;
+      --accent:#1a6bff;
+      --shadow: 0 18px 60px rgba(5,18,40,.10);
+      --shadow2: 0 10px 26px rgba(5,18,40,.10);
+      --r: 24px;
+      --r2: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 12% 15%, rgba(29,108,226,.12), transparent 62%),
+        radial-gradient(900px 600px at 82% 30%, rgba(20,80,143,.10), transparent 60%),
+        linear-gradient(180deg, #ffffff 0%, #f6f9ff 55%, #ffffff 100%);
+      overflow-x:hidden;
+    }
+
+    /* Court background layer */
+    .court-bg{
+      position:fixed;
+      inset:-10% -10% -10% -10%;
+      pointer-events:none;
+      z-index:-2;
+      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201000%20500%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20.l%7Bfill%3Anone%3Bstroke%3A%2314508F%3Bstroke-width%3A4%3Bstroke-opacity%3A.22%3Bvector-effect%3Anon-scaling-stroke%3B%7D%0A%20%20%20%20%20%20.d%7Bfill%3Anone%3Bstroke%3A%2314508F%3Bstroke-width%3A3%3Bstroke-opacity%3A.14%3Bstroke-dasharray%3A10%2010%3Bvector-effect%3Anon-scaling-stroke%3B%7D%0A%20%20%20%20%3C/style%3E%0A%20%20%3C/defs%3E%0A%0A%20%20%3C%21--%20Outer%20boundaries%20--%3E%0A%20%20%3Crect%20class%3D%27l%27%20x%3D%2720%27%20y%3D%2720%27%20width%3D%27960%27%20height%3D%27460%27%20rx%3D%2718%27/%3E%0A%0A%20%20%3C%21--%20Center%20line%20%26%20circle%20--%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27500%27%20y1%3D%2720%27%20x2%3D%27500%27%20y2%3D%27480%27/%3E%0A%20%20%3Ccircle%20class%3D%27l%27%20cx%3D%27500%27%20cy%3D%27250%27%20r%3D%2760%27/%3E%0A%20%20%3Ccircle%20class%3D%27d%27%20cx%3D%27500%27%20cy%3D%27250%27%20r%3D%2710%27/%3E%0A%0A%20%20%3C%21--%20Keys%20--%3E%0A%20%20%3Crect%20class%3D%27l%27%20x%3D%2720%27%20y%3D%27170%27%20width%3D%27190%27%20height%3D%27160%27/%3E%0A%20%20%3Crect%20class%3D%27l%27%20x%3D%27790%27%20y%3D%27170%27%20width%3D%27190%27%20height%3D%27160%27/%3E%0A%0A%20%20%3C%21--%20Free-throw%20circles%20%28dashed%29%20--%3E%0A%20%20%3Ccircle%20class%3D%27d%27%20cx%3D%27210%27%20cy%3D%27250%27%20r%3D%2760%27/%3E%0A%20%20%3Ccircle%20class%3D%27d%27%20cx%3D%27790%27%20cy%3D%27250%27%20r%3D%2760%27/%3E%0A%0A%20%20%3C%21--%20Baskets%20--%3E%0A%20%20%3Ccircle%20class%3D%27l%27%20cx%3D%2790%27%20cy%3D%27250%27%20r%3D%278%27/%3E%0A%20%20%3Ccircle%20class%3D%27l%27%20cx%3D%27910%27%20cy%3D%27250%27%20r%3D%278%27/%3E%0A%0A%20%20%3C%21--%20Backboards%20--%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27115%27%20y1%3D%27220%27%20x2%3D%27115%27%20y2%3D%27280%27/%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27885%27%20y1%3D%27220%27%20x2%3D%27885%27%20y2%3D%27280%27/%3E%0A%0A%20%20%3C%21--%20Restricted%20area%20arcs%20--%3E%0A%20%20%3Cpath%20class%3D%27l%27%20d%3D%27M130%20210%20A40%2040%200%200%201%20130%20290%27/%3E%0A%20%20%3Cpath%20class%3D%27l%27%20d%3D%27M870%20210%20A40%2040%200%200%200%20870%20290%27/%3E%0A%0A%20%20%3C%21--%20Corner%203pt%20lines%20--%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27140%27%20y1%3D%2720%27%20x2%3D%27140%27%20y2%3D%27130%27/%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27140%27%20y1%3D%27370%27%20x2%3D%27140%27%20y2%3D%27480%27/%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27860%27%20y1%3D%2720%27%20x2%3D%27860%27%20y2%3D%27130%27/%3E%0A%20%20%3Cline%20class%3D%27l%27%20x1%3D%27860%27%20y1%3D%27370%27%20x2%3D%27860%27%20y2%3D%27480%27/%3E%0A%0A%20%20%3C%21--%203pt%20arcs%20--%3E%0A%20%20%3Cpath%20class%3D%27l%27%20d%3D%27M178%2032%20A235%20235%200%200%201%20178%20468%27/%3E%0A%20%20%3Cpath%20class%3D%27l%27%20d%3D%27M822%2032%20A235%20235%200%200%200%20822%20468%27/%3E%0A%3C/svg%3E");
+      background-repeat:repeat;
+      background-size: 980px 490px;
+      opacity:.85;
+      transform: translate3d(0,0,0);
+      filter: saturate(1.08) contrast(1.02);
+      mask-image: radial-gradient(closest-side at 50% 45%, rgba(0,0,0,.88), rgba(0,0,0,.12));
+    }
+
+    /* soft fading / appearing like your previous effect */
+    .court-bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(700px 500px at 20% 20%, rgba(255,255,255,.85), transparent 62%),
+        radial-gradient(900px 650px at 80% 35%, rgba(255,255,255,.82), transparent 60%),
+        radial-gradient(900px 650px at 50% 80%, rgba(255,255,255,.72), transparent 60%);
+      animation: courtBreath 7.5s ease-in-out infinite;
+      opacity:.8;
+    }
+
+    @keyframes courtBreath{
+      0%,100%{opacity:.74; filter: blur(0px)}
+      50%{opacity:.95; filter: blur(.25px)}
+    }
+
+    
+
+    /* --- Header --- */
+    header{
+      position:sticky; top:0;
+      z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(248,252,255,.72);
+      border-bottom: 1px solid rgba(16,74,155,.10);
+    }
+    .nav{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 260px;
+    }
+    /* Match header logo size across all pages (same as Accueil) */
+    .brand img{width:48px; height:48px; object-fit:contain}
+    .brand .t1{
+      font-weight:800; letter-spacing:.02em;
+      line-height:1.05;
+      color: var(--blue);
+      font-size: 14px;
+    }
+    .brand .t2{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top:2px;
+      font-weight:600;
+    }
+    nav{
+      flex: 1;
+      display:flex;
+      justify-content:center;
+      gap: 26px;
+      font-weight:700;
+      color: rgba(8,21,46,.78);
+    }
+    nav a{
+      text-decoration:none;
+      color: inherit;
+      padding: 8px 10px;
+      border-radius: 999px;
+      transition: transform .18s ease, background .18s ease, color .18s ease;
+      position:relative;
+    }
+    nav a:hover{background: rgba(16,74,155,.08); transform: translateY(-1px)}
+    nav a.active{
+      background: rgba(16,74,155,.12);
+      color: var(--blue);
+    }
+    .ctaPill{
+      margin-left:auto;
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(16,74,155,.18);
+      background: rgba(255,255,255,.75);
+      box-shadow: var(--shadow2);
+      color: var(--blue);
+      font-weight:800;
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .ctaDot{width:8px; height:8px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 6px rgba(26,107,255,.12)}
+    .social{
+      display:flex; gap:10px; margin-left:10px;
+    }
+    .iconBtn{
+      width:38px; height:38px;
+      border-radius: 999px;
+      border:1px solid rgba(16,74,155,.16);
+      background: rgba(255,255,255,.75);
+      display:grid; place-items:center;
+      box-shadow: var(--shadow2);
+      transition: transform .18s ease, background .18s ease;
+    }
+.iconBtn.ballcta{background:rgba(255,255,255,.92);border-color:rgba(120,170,255,.6);color:var(--blue);} 
+.iconBtn.ballcta svg{fill:none;stroke:currentColor;}
+
+    .iconBtn:hover{transform: translateY(-1px) scale(1.03); background: rgba(232,242,255,.9)}
+    .iconBtn svg{width:18px; height:18px; fill: var(--blue)}
+
+    /* --- Layout --- */
+    .wrap{max-width:1200px; margin:0 auto; padding: 28px 18px 80px}
+    .hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 26px;
+      align-items: center;
+      padding: 34px 0 26px;
+    }
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-size: 12px;
+      color: rgba(11,46,95,.75);
+    }
+    .kicker .pip{width:9px; height:9px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 8px rgba(26,107,255,.12)}
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(42px, 5.2vw, 66px);
+      line-height: .95;
+      letter-spacing: -.03em;
+      color: var(--text);
+    }
+    .lead{
+      margin: 12px 0 22px;
+      font-size: 16px;
+      color: rgba(8,21,46,.72);
+      max-width: 56ch;
+      font-weight:650;
+    }
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    .chip{
+      border: 1px solid rgba(16,74,155,.16);
+      background: rgba(255,255,255,.68);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight:800;
+      font-size: 13px;
+      color: rgba(11,46,95,.90);
+      box-shadow: 0 10px 24px rgba(5,18,40,.06);
+      display:flex; align-items:center; gap:10px;
+    }
+    .chip .mini{width:7px; height:7px; border-radius:999px; background: rgba(26,107,255,.9)}
+    .heroCard{
+      position:relative;
+      border-radius: calc(var(--r) + 8px);
+      background: radial-gradient(700px 520px at 40% 15%, rgba(255,255,255,.85), rgba(255,255,255,.55) 55%, rgba(255,255,255,.30) 100%);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-height: 420px;
+      transform-style: preserve-3d;
+    }
+    .heroCard::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(400px 260px at 20% 20%, rgba(26,107,255,.20), rgba(26,107,255,0) 60%),
+        radial-gradient(420px 300px at 80% 30%, rgba(11,46,95,.12), rgba(11,46,95,0) 60%),
+        radial-gradient(520px 320px at 50% 85%, rgba(16,74,155,.10), rgba(16,74,155,0) 58%);
+      opacity:.9;
+      pointer-events:none;
+      transform: translateZ(-1px);
+    }
+
+    /* --- Collage with "unusual" motion masks --- */
+    .collage{
+      position:absolute; inset: 0;
+      padding: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1.05fr .95fr;
+      gap: 12px;
+      transform: translateZ(10px);
+    }
+    .frame{
+      position:relative;
+      border-radius: 22px;
+      overflow:hidden;
+      box-shadow: 0 20px 40px rgba(5,18,40,.16);
+      border: 1px solid rgba(255,255,255,.55);
+      background: #fff;
+      transform: translateZ(18px);
+      will-change: transform, clip-path, filter;
+    }
+    .frame img{
+      width:100%; height:100%;
+      object-fit:cover;
+      transform: scale(1.08);
+      filter: saturate(1.05) contrast(1.02);
+      will-change: transform;
+    }
+    .frame::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(500px 260px at 0% 0%, rgba(255,255,255,.25), rgba(255,255,255,0) 60%),
+                  linear-gradient(180deg, rgba(8,21,46,0) 0%, rgba(8,21,46,.18) 100%);
+      pointer-events:none;
+      mix-blend-mode: screen;
+      opacity:.6;
+    }
+
+    /* organic mask animation (no heavy neon) */
+    .maskA{ clip-path: polygon(0% 8%, 92% 0%, 100% 90%, 18% 100%, 0% 66%); }
+    .maskB{ clip-path: polygon(8% 0%, 100% 10%, 92% 100%, 0% 92%, 0% 22%); }
+    .maskC{ clip-path: polygon(0% 0%, 100% 0%, 94% 76%, 22% 100%, 0% 84%); }
+    .maskD{ clip-path: polygon(6% 8%, 100% 0%, 100% 100%, 0% 94%, 0% 22%); }
+
+    .float1{ animation: floaty 7.5s ease-in-out infinite; }
+    .float2{ animation: floaty 8.6s ease-in-out infinite reverse; }
+    .float3{ animation: floaty 9.2s ease-in-out infinite; }
+    .float4{ animation: floaty 8.0s ease-in-out infinite reverse; }
+
+    @keyframes floaty{
+      0%{ transform: translate3d(0,0,0) rotate(-.3deg) }
+      50%{ transform: translate3d(0,-10px,0) rotate(.35deg) }
+      100%{ transform: translate3d(0,0,0) rotate(-.3deg) }
+    }
+
+    .badge{
+      position:absolute;
+      left: 16px; bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.80);
+      border: 1px solid rgba(16,74,155,.16);
+      font-weight:900;
+      color: var(--blue);
+      box-shadow: 0 16px 40px rgba(5,18,40,.14);
+      transform: translateZ(30px);
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge .spark{
+      width:9px; height:9px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 7px rgba(26,107,255,.14);
+    }
+
+    /* --- Sections --- */
+    .section{margin-top: 22px}
+    .sectionTitle{
+      margin: 38px 0 10px;
+      font-size: 22px;
+      letter-spacing: -.01em;
+      color: rgba(8,21,46,.92);
+    }
+    .sectionSub{
+      margin: 0 0 18px;
+      color: rgba(82,99,122,.92);
+      font-weight:650;
+      max-width: 80ch;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .glass{
+      border-radius: var(--r);
+      background: rgba(255,255,255,.68);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: var(--shadow2);
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .glass::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(420px 240px at 18% 22%, rgba(26,107,255,.12), rgba(26,107,255,0) 62%),
+        radial-gradient(420px 260px at 92% 16%, rgba(11,46,95,.10), rgba(11,46,95,0) 60%);
+      opacity:.95;
+      pointer-events:none;
+    }
+    .glass h3{margin:0 0 10px; font-size:18px; letter-spacing:-.01em}
+    .glass p{margin:0; color: rgba(8,21,46,.74); font-weight:650; line-height:1.55}
+
+    /* --- Pricing playground --- */
+    .pricingWrap{
+      margin-top: 16px;
+      border-radius: calc(var(--r) + 10px);
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .pricingTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid rgba(16,74,155,.12);
+      background: rgba(248,252,255,.60);
+    }
+    .tierTabs{
+      display:flex; gap: 10px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(16,74,155,.08);
+      border: 1px solid rgba(16,74,155,.10);
+      position:relative;
+      overflow:hidden;
+    }
+    .tierTabs button{
+      appearance:none;
+      border:0;
+      background: transparent;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight:900;
+      color: rgba(8,21,46,.76);
+      cursor:pointer;
+      position:relative;
+      z-index:2;
+      transition: transform .15s ease, color .15s ease;
+    }
+    .tierTabs button:hover{transform: translateY(-1px)}
+    .tierTabs button[aria-selected="true"]{color: var(--blue)}
+    .tierPill{
+      position:absolute;
+      top:6px; bottom:6px;
+      width: 120px;
+      left: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 12px 26px rgba(5,18,40,.12);
+      border: 1px solid rgba(16,74,155,.14);
+      transition: transform .35s cubic-bezier(.2,.9,.2,1);
+      z-index:1;
+    }
+
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight:900;
+      color: rgba(8,21,46,.72);
+      user-select:none;
+    }
+    .switch{
+      width: 54px; height: 32px;
+      border-radius: 999px;
+      background: rgba(16,74,155,.10);
+      border: 1px solid rgba(16,74,155,.14);
+      position:relative;
+      cursor:pointer;
+      box-shadow: 0 10px 24px rgba(5,18,40,.08);
+    }
+    .knob{
+      position:absolute; top: 3px; left: 3px;
+      width: 26px; height: 26px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: 0 10px 20px rgba(5,18,40,.10);
+      transition: transform .25s ease;
+    }
+    .annual .knob{ transform: translateX(22px); }
+    .save{
+      font-size: 12px;
+      font-weight:900;
+      color: var(--blue);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(26,107,255,.18);
+      background: rgba(232,242,255,.85);
+    }
+
+    .pricingBody{
+      padding: 16px;
+    }
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .plan{
+      position:relative;
+      border-radius: var(--r);
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: 0 16px 40px rgba(5,18,40,.10);
+      overflow:hidden;
+      padding: 16px;
+      transform: translateZ(0);
+      transition: transform .18s ease, box-shadow .18s ease;
+      will-change: transform;
+    }
+    .plan:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(5,18,40,.14);
+    }
+    .plan::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(420px 240px at 14% 18%, rgba(26,107,255,.12), rgba(26,107,255,0) 60%),
+        radial-gradient(520px 320px at 100% 15%, rgba(11,46,95,.10), rgba(11,46,95,0) 55%);
+      opacity:.95;
+      pointer-events:none;
+    }
+    .planHeader{
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;
+      position:relative;
+    }
+    .planTitle{
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -.01em;
+      font-weight:950;
+      color: rgba(8,21,46,.92);
+    }
+    .planSub{
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: rgba(11,46,95,.65);
+    }
+    .tag{
+      font-size: 11px;
+      font-weight:950;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(11,46,95,.80);
+      border: 1px solid rgba(16,74,155,.16);
+      background: rgba(248,252,255,.85);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .price{
+      margin-top: 12px;
+      font-size: 34px;
+      letter-spacing:-.03em;
+      font-weight:1000;
+      color: var(--blue);
+      position:relative;
+      display:flex; align-items:baseline; gap: 8px;
+    }
+    .price small{
+      font-size: 13px;
+      font-weight:900;
+      color: rgba(82,99,122,.90);
+    }
+    .per{
+      font-size: 12px;
+      color: rgba(82,99,122,.92);
+      font-weight:850;
+      margin-left: 2px;
+    }
+    .desc{
+      margin: 10px 0 12px;
+      color: rgba(8,21,46,.74);
+      font-weight:650;
+      line-height:1.5;
+      position:relative;
+    }
+    .bullets{
+      margin: 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap: 8px;
+      position:relative;
+    }
+    .bullets li{
+      display:flex; gap: 10px;
+      color: rgba(8,21,46,.74);
+      font-weight:650;
+      line-height:1.35;
+    }
+    .bullets .check{
+      width:18px; height:18px; border-radius: 6px;
+      background: rgba(26,107,255,.12);
+      border: 1px solid rgba(26,107,255,.18);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+    .bullets svg{width:12px; height:12px; fill: var(--accent)}
+
+    .planFooter{
+      margin-top: 14px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(16,74,155,.18);
+      background: rgba(255,255,255,.80);
+      color: var(--blue);
+      font-weight:950;
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      box-shadow: 0 14px 26px rgba(5,18,40,.10);
+      transition: transform .18s ease, background .18s ease;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(232,242,255,.9)}
+    .btn.primary{
+      border-color: rgba(26,107,255,.22);
+      background: rgba(26,107,255,.10);
+    }
+    .micro{
+      font-size: 12px;
+      color: rgba(82,99,122,.92);
+      font-weight:800;
+    }
+
+    /* Spotlight (updates via JS) */
+    .spot{
+      position:absolute; inset:-2px;
+      background: radial-gradient(420px 240px at var(--mx,50%) var(--my,40%), rgba(26,107,255,.20), rgba(26,107,255,0) 60%);
+      opacity:.9;
+      pointer-events:none;
+      mix-blend-mode: multiply;
+      transition: opacity .2s ease;
+    }
+    .pricingWrap:hover .spot{opacity:1}
+    .pricingWrap:not(:hover) .spot{opacity:.72}
+
+    /* --- Gallery (unusual) --- */
+    .gallery{
+      margin-top: 18px;
+      border-radius: calc(var(--r) + 10px);
+      background: rgba(255,255,255,.58);
+      border: 1px solid rgba(16,74,155,.14);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      padding: 14px;
+    }
+    .reelTop{
+      display:flex; align-items:end; justify-content:space-between;
+      gap: 14px;
+      padding: 6px 4px 10px;
+    }
+    .reelTop .hint{
+      color: rgba(82,99,122,.92);
+      font-weight:800;
+      font-size: 13px;
+    }
+    .reel{
+      position:relative;
+      height: 340px;
+      border-radius: var(--r);
+      overflow:hidden;
+      border: 1px solid rgba(16,74,155,.12);
+      background: linear-gradient(180deg, rgba(248,252,255,.8), rgba(255,255,255,.55));
+      cursor: grab;
+      user-select:none;
+    }
+    .reel:active{cursor:grabbing}
+    .stack{
+      position:absolute; inset:0;
+      perspective: 1200px;
+    }
+    .polaroid{
+      position:absolute;
+      width: 280px;
+      height: 220px;
+      border-radius: 16px;
+      overflow:hidden;
+      background: #fff;
+      border: 1px solid rgba(16,74,155,.12);
+      box-shadow: 0 26px 55px rgba(5,18,40,.16);
+      transform-style:preserve-3d;
+      will-change: transform;
+    }
+    .polaroid img{
+      width:100%; height:100%;
+      object-fit:cover;
+      transform: scale(1.05);
+    }
+    .polaroid::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(460px 260px at 10% 10%, rgba(255,255,255,.30), rgba(255,255,255,0) 60%),
+                  linear-gradient(180deg, rgba(8,21,46,0) 0%, rgba(8,21,46,.14) 100%);
+      pointer-events:none;
+    }
+
+    /* --- Scroll reveal --- */
+    .reveal{opacity:0; transform: translateY(14px); filter: blur(6px); transition: opacity .6s ease, transform .6s ease, filter .6s ease}
+    .reveal.on{opacity:1; transform: translateY(0); filter: blur(0)}
+
+    footer{
+      margin-top: 46px;
+      padding: 28px 0 0;
+      border-top: 1px solid rgba(16,74,155,.12);
+      color: rgba(82,99,122,.92);
+      font-weight:750;
+      display:flex;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap:wrap;
+    }
+    footer a{color: var(--blue); text-decoration:none; font-weight:900}
+    footer a:hover{text-decoration:underline}
+
+    /* --- Responsive --- */
+    @media (max-width: 980px){
+      nav{display:none}
+      .brand{min-width:auto}
+      .hero{grid-template-columns: 1fr; }
+      .heroCard{min-height: 420px}
+      .cards{grid-template-columns: 1fr; }
+      .two{grid-template-columns: 1fr}
+      .ctaPill{display:none}
+      .reel{height: 380px}
+    }
+  </style>
+</head>
+<body>
+  <div class="court-bg" aria-hidden="true"></div>
+
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="assets/logo_header.png" alt="Fly Future Champions" />
+        <div>
+          <div class="t1">FLY FUTURE CHAMPIONS</div>
+          <div class="t2">Basketball • Jeunes • Haut niveau</div>
+        </div>
+      </div>
+
+      <nav aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="detections.html">Détections</a>
+        <a class="active" href="programmes.html">Programmes</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="ctaPill" title="Détection confirmée">
+        <span class="ctaDot"></span>
+        Prochaine détection • 22 février 2026
+      </div>
+
+      <div class="social" aria-label="Réseaux sociaux">
+        <a class="iconBtn" href="https://www.instagram.com/fly_future_champions?igsh=MTA0NXJhbzdvY3Vy" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm8.4 2H7.8A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4z"/><path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><circle cx="17.5" cy="6.5" r="1.2"/></svg>
+        </a>
+        <a class="iconBtn" href="https://www.tiktok.com/@leflyassociation?_r=1&_t=ZN-93D6r6lFyTL" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M16.5 2h-3.2v13.1c0 1.7-1.3 3-3 3s-3-1.3-3-3 1.3-3 3-3c.6 0 1.1.2 1.6.5V9.4c-.5-.2-1.1-.3-1.6-.3-3 0-5.5 2.5-5.5 5.5S7.3 20 10.3 20s5.5-2.5 5.5-5.5V8.7c1.2 1.1 2.7 1.8 4.4 1.9V7.4c-1.5-.1-2.9-.9-3.7-2.1-.5-.8-.8-1.8-.8-3.3z"/></svg>
+        </a>
+        <a class="iconBtn ballcta" href="https://www.leflyasso.com/" target="_blank" rel="noopener" aria-label="Aller sur leflyasso.com"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M12 3v18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M6 6c3 3 3 9 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M18 6c-3 3-3 9 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="kicker"><span class="pip"></span>PROGRAMMES • ACCOMPAGNEMENT • DÉVELOPPEMENT</div>
+        <h1>Ta progression.<br/>Notre méthode.</h1>
+<div class="chips">
+          <div class="chip"><span class="mini"></span>Analyse match & entraînement</div>
+          <div class="chip"><span class="mini"></span>Coaching personnalisé</div>
+          <div class="chip"><span class="mini"></span>Recherche d’essais & clubs</div>
+          <div class="chip"><span class="mini"></span>Mental • Physique • Technique</div>
+        </div>
+      </div>
+
+      <div class="heroCard" id="heroCard" aria-label="Ambiance Fly Future Champions">
+        <div class="collage" id="collage">
+          <div class="frame maskA float1"><img src="assets/prog_1.jpeg" alt="Fly — séance et coaching"></div>
+          <div class="frame maskB float2"><img src="assets/prog_2.jpeg" alt="Détection — esprit de groupe"></div>
+          <div class="frame maskC float3"><img src="assets/prog_3.jpeg" alt="Encadrement — conseils"></div>
+          <div class="frame maskD float4"><img src="assets/prog_4.jpeg" alt="Ambiance — intensité"></div>
+        </div>
+        <div class="badge"><span class="spark"></span>Viens tester ton niveau</div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="sectionTitle">Les 2 axes Fly Future Champions</div>
+      <div class="sectionSub">Choisis l’accompagnement dont tu as besoin — ou combine les deux avec le pack complet.</div>
+
+      <div class="two">
+        <div class="glass" data-tilt>
+          <h3>Services d’accompagnement</h3>
+          <p>
+            Objectif : maximiser tes chances via un essai structuré et bien préparé.
+            Analyses de compétences, coaching personnalisé, recherche d’essais,
+            développement, mental et suivi complet.
+          </p>
+        </div>
+
+        <div class="glass" data-tilt>
+          <h3>Conseils & développement</h3>
+          <p>
+            Pour les joueurs qui veulent progresser sur le long terme et prendre les bonnes décisions.
+            Orientation stratégique, programme d’entraînement personnalisé, préparation aux essais,
+            et coaching mental.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="pricing">
+      <div class="sectionTitle">Tarifs & niveaux</div>
+      <div class="sectionSub">Sélectionne ton niveau (Future / Champions), puis choisis ton programme. Mensuel ou annuel.</div>
+
+      <div class="pricingWrap" id="pricingWrap">
+        <div class="spot" aria-hidden="true"></div>
+
+        <div class="pricingTop">
+          <div class="tierTabs" role="tablist" aria-label="Niveaux">
+            <div class="tierPill" id="tierPill" aria-hidden="true"></div>
+            <button type="button" role="tab" aria-selected="false" data-tier="future">Future</button>
+            <button type="button" role="tab" aria-selected="false" data-tier="champions">Champions</button>
+          </div>
+
+          <div class="toggle" id="billingToggle" aria-label="Période de facturation">
+            <span>Mensuel</span>
+            <div class="switch" role="switch" aria-checked="false" tabindex="0">
+              <div class="knob"></div>
+            </div>
+            <span>Annuel</span>
+            <span class="save">Meilleur prix</span>
+          </div>
+        </div>
+
+        <div class="pricingBody">
+          <div class="cards" id="cards"></div>
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <a class="btn primary" href="contact.html">Parler au staff</a>
+            <span class="micro">Tu hésites ? On t’oriente vers le niveau adapté.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+
+    <footer>
+      <div>© <span id="year"></span> Fly Future Champions</div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap">
+        <a href="detections.html">Détections</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // --- Data ---
+    const DATA = {
+      future: {
+        label: "Future",
+        badge: "Niveau régional",
+        cards: [
+          { key: "accompagnement", title: "Service d’accompagnement", tag: "RAPPORTS", priceM: 150, priceA: 1500, desc: "Rapports détaillés + présence régulière 1 match/entraînement par semaine + recherche club.", bullets: ["Rapports de performance", "Présence hebdo", "Recherche de club"] },
+          { key: "dev", title: "Conseils & développement", tag: "RÉGIONAL", priceM: 120, priceA: 1200, desc: "2 entraînements/semaine avec planification individualisée + mental + stratégie.", bullets: ["Planification individualisée", "Coaching mental", "Préparation stratégique"] },
+          { key: "pack", title: "Pack complet", tag: "PERFORMANCE", priceM: 220, priceA: 2200, desc: "Accompagnement + Développement pour viser le niveau régional.", bullets: ["Suivi complet", "Travail mental & physique", "Projection club/essais"] }
+        ]
+      },
+      champions: {
+        label: "Champions",
+        badge: "Niveau national",
+        cards: [
+          { key: "accompagnement", title: "Service d’accompagnement", tag: "SUIVI PRO", priceM: 200, priceA: 2000, desc: "Suivi personnalisé + présence 1 match/entraînement par semaine + recherche club adapté.", bullets: ["Analyse match & entraînement", "Présence hebdo sur terrain", "Recherche de club adapté"] },
+          { key: "dev", title: "Conseils & développement", tag: "HAUT NIVEAU", priceM: 160, priceA: 1600, desc: "2 entraînements/semaine (technique + physique + mental) + conseils stratégiques.", bullets: ["2 entraînements/semaine", "Objectifs & décisions", "Coaching mental"] },
+          { key: "pack", title: "Pack complet", tag: "TOUT INCLUS", priceM: 300, priceA: 3000, desc: "Accompagnement + Développement pour une progression totale.", bullets: ["Suivi + entraînements", "Stratégie + mental", "Priorité sur la planification"] }
+        ]
+      }
+    };
+
+    const $ = (q, el=document) => el.querySelector(q);
+    const $$ = (q, el=document) => Array.from(el.querySelectorAll(q));
+
+    // --- Footer year ---
+    $("#year").textContent = new Date().getFullYear();
+
+    // --- Hero 3D tilt (lightweight) ---
+    const heroCard = $("#heroCard");
+    const collage = $("#collage");
+    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+    function tilt(el, x, y){
+      const rX = clamp((y - .5) * -10, -8, 8);
+      const rY = clamp((x - .5) *  12, -10, 10);
+      el.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
+      collage.style.transform = `translateZ(10px) translate(${(x-.5)*10}px, ${(y-.5)*8}px)`;
+      // micro zoom for images
+      $$(".frame img", el).forEach((img,i)=>{
+        img.style.transform = `scale(${1.08 + (i%2)*.01}) translate(${(x-.5)*6}px, ${(y-.5)*5}px)`;
+      });
+    }
+
+    let raf = null;
+    heroCard.addEventListener("pointermove", (e)=>{
+      const r = heroCard.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      if(raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(()=> tilt(heroCard, x, y));
+    });
+    heroCard.addEventListener("pointerleave", ()=>{
+      heroCard.style.transform = "rotateX(0deg) rotateY(0deg)";
+      collage.style.transform = "translateZ(10px)";
+      $$(".frame img", heroCard).forEach(img=> img.style.transform="scale(1.08)");
+    });
+
+    // small tilt for the 2 axis cards
+    $$("[data-tilt]").forEach(card=>{
+      card.addEventListener("pointermove", (e)=>{
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left)/r.width - .5;
+        const y = (e.clientY - r.top)/r.height - .5;
+        card.style.transform = `translateY(-2px) rotateX(${(-y*6)}deg) rotateY(${(x*7)}deg)`;
+      });
+      card.addEventListener("pointerleave", ()=> card.style.transform = "translateY(0) rotateX(0) rotateY(0)");
+    });
+
+    // --- Pricing rendering + animated pill ---
+    const tierButtons = $$(".tierTabs button");
+    const tierPill = $("#tierPill");
+    const cards = $("#cards");
+    const billingToggle = $("#billingToggle");
+    const switchEl = $(".switch", billingToggle);
+
+    let tier = "future";
+    let billing = "monthly"; // or annual
+
+    function setTier(newTier){
+      tier = newTier;
+      tierButtons.forEach(btn => btn.setAttribute("aria-selected", btn.dataset.tier === tier ? "true" : "false"));
+      const idx = tierButtons.findIndex(b=>b.dataset.tier===tier);
+      // move pill (fixed widths: compute from buttons)
+      const first = tierButtons[0].getBoundingClientRect();
+      const target = tierButtons[idx].getBoundingClientRect();
+      const parent = tierButtons[0].parentElement.getBoundingClientRect();
+      const x = target.left - parent.left;
+      tierPill.style.width = (target.width) + "px";
+      tierPill.style.transform = `translateX(${x}px)`;
+      renderCards(true);
+    }
+
+    function setBilling(isAnnual){
+      billing = isAnnual ? "annual" : "monthly";
+      billingToggle.classList.toggle("annual", isAnnual);
+      switchEl.setAttribute("aria-checked", isAnnual ? "true" : "false");
+      renderCards(false);
+    }
+
+    
+    function priceLabel(p){
+      const v = (billing === "monthly") ? p.priceM : p.priceA;
+      const per = (billing === "monthly") ? "mois" : "an";
+      // On colle à la mise en forme "carte" : prix grand + euro et /mois plus petits
+      return {
+        value: v,
+        html: `<span class="num" data-target="${v}">${v}</span><small>€</small><span class="per">/ ${per}</span>`
+      };
+    }
+
+    function renderCards(animate=true){
+      const d = DATA[tier];
+      cards.innerHTML = d.cards.map((p)=>{
+        const pr = priceLabel(p);
+        return `
+        <article class="plan" data-key="${p.key}">
+          <div class="planHeader">
+            <div>
+              <div class="planTitle">${p.title}</div>
+              <div class="planSub">${d.badge}</div>
+            </div>
+            <span class="tag">${p.tag}</span>
+          </div>
+          <div class="price">${pr.html}</div>
+          <p class="desc">${p.desc}</p>
+          <ul class="bullets">
+            ${p.bullets.map(f=>`<li><i class="ic">✓</i><span>${f}</span></li>`).join("")}
+          </ul>
+          <div class="planFooter">
+            <button class="btn">S’inscrire</button>
+            <span class="small">Paiement ${billing==="monthly" ? "mensuel" : "annuel"}</span>
+          </div>
+        </article>
+        `;
+      }).join("");
+
+      if(animate) animateNumbers();
+    }
+function animateNumbers(){
+      $$(".num", cards).forEach(n=>{
+        const target = parseInt(n.dataset.target,10);
+        const start = parseInt(n.textContent.replace(/\D/g,"") || "0",10);
+        const diff = target - start;
+        const t0 = performance.now();
+        const dur = 420;
+        function step(t){
+          const p = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1-p, 3);
+          n.textContent = Math.round(start + diff*eased);
+          if(p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    tierButtons.forEach(btn=>{
+      btn.addEventListener("click", ()=> setTier(btn.dataset.tier));
+    });
+
+    function toggleBilling(){
+      setBilling(!(billing === "annual"));
+    }
+    switchEl.addEventListener("click", toggleBilling);
+    switchEl.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggleBilling(); }
+    });
+
+    // Init
+    requestAnimationFrame(()=> setTier("future"));
+    setBilling(false);
+
+    // --- Spotlight follow ---
+    const pricingWrap = $("#pricingWrap");
+    pricingWrap.addEventListener("pointermove", (e)=>{
+      const r = pricingWrap.getBoundingClientRect();
+      const x = ((e.clientX - r.left)/r.width)*100;
+      const y = ((e.clientY - r.top)/r.height)*100;
+      pricingWrap.style.setProperty("--mx", x+"%");
+      pricingWrap.style.setProperty("--my", y+"%");
+    });
+
+    // --- Scroll reveal ---
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting) en.target.classList.add("on");
+      });
+    }, {threshold: 0.18});
+    $$(".reveal").forEach(el=>obs.observe(el));
+  </script>
+<script>
+(function(){
+  // Add "Ajouter au panier" buttons inside the pricing cards based on headings.
+  const cards = Array.from(document.querySelectorAll('.plan, .pricingCard, .card, .tier, .priceCard')).slice(0, 30);
+  const seen = new Set();
+  function addBtn(card, name, euros){
+    if(!card || seen.has(card)) return;
+    seen.add(card);
+    const btn = document.createElement('button');
+    btn.type='button';
+    btn.textContent = 'Ajouter au panier';
+    btn.style.cssText = 'margin-top:10px;width:100%;border:none;border-radius:14px;padding:12px 14px;cursor:pointer;background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.16);font-weight:900;';
+    btn.addEventListener('click', ()=> window.addToCart(name, euros));
+    card.appendChild(btn);
+  }
+
+  // Match by text
+  document.querySelectorAll('h3, h4').forEach(h=>{
+    const t=(h.textContent||'').trim().toLowerCase();
+    const card = h.closest('.plan, .pricingCard, .card, .tier, .priceCard') || h.parentElement;
+    // Future
+    if(t.includes('future') && t.includes('pack complet')) addBtn(card, 'Pack complet — Future', 220);
+    if(t.includes('future') && (t.includes('accompagnement') || t.includes('accomp'))) addBtn(card, 'Accompagnement — Future', 150);
+    if(t.includes('future') && (t.includes('conseil') || t.includes('développement') || t.includes('developp'))) addBtn(card, 'Conseils & développement — Future', 120);
+
+    // Champions
+    if(t.includes('champions') && t.includes('pack complet')) addBtn(card, 'Pack complet — Champions', 300);
+    if(t.includes('champions') && (t.includes('accompagnement') || t.includes('accomp'))) addBtn(card, 'Accompagnement — Champions', 200);
+    if(t.includes('champions') && (t.includes('conseil') || t.includes('développement') || t.includes('developp'))) addBtn(card, 'Conseils & développement — Champions', 150);
+  });
+})();
+</script>
+<!-- Cart Drawer -->
+<div id="cartFab" style="position:fixed; right:18px; bottom:18px; z-index:9999; display:flex; gap:10px; align-items:center;">
+  <button id="cartBtn" aria-label="Panier" style="border:none; cursor:pointer; border-radius:999px; padding:12px 14px; background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(10px); font-weight:800;">
+    🧺 Panier <span id="cartCount" style="opacity:.85; font-weight:900;">0</span>
+  </button>
+</div>
+
+<div id="cartOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9998; display:none;"></div>
+<aside id="cartDrawer" style="position:fixed; top:0; right:-420px; width:420px; max-width:92vw; height:100vh; z-index:9999; transition:right .22s ease; background:rgba(7,27,58,.92); border-left:1px solid rgba(255,255,255,.14); backdrop-filter: blur(16px);">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 16px; border-bottom:1px solid rgba(255,255,255,.12);">
+    <div style="font-weight:900; letter-spacing:.2px;">Panier</div>
+    <button id="cartClose" style="border:none; background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:8px 10px; cursor:pointer;">✕</button>
+  </div>
+  <div style="padding:14px 16px; display:flex; flex-direction:column; height:calc(100vh - 58px);">
+    <div id="cartItems" style="display:flex; flex-direction:column; gap:10px; overflow:auto; padding-right:6px;"></div>
+    <div style="margin-top:auto; border-top:1px solid rgba(255,255,255,.12); padding-top:12px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div style="opacity:.8; font-size:13px;">Total</div>
+        <div id="cartTotal" style="font-weight:900;">0 €</div>
+      </div>
+
+      <button id="payStripe" style="width:100%; border:none; border-radius:14px; padding:12px 14px; cursor:pointer; background:rgba(26,107,255,.40); color:#fff; border:1px solid rgba(255,255,255,.16); font-weight:900;">
+        Payer (Carte / Apple Pay)
+      </button>
+
+      <div style="height:10px;"></div>
+
+      <div id="paypalWrap" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:10px;">
+        <div style="font-size:12px; opacity:.75; margin-bottom:8px;">Ou payer avec PayPal</div>
+        <div id="paypalButtons"></div>
+        <div id="paypalHint" style="font-size:12px; opacity:.6;">(Configure PAYPAL_CLIENT_ID)</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script src="assets/app-config.js"></script>
+<script>
+(function(){
+  const cart = [];
+  const fmt = (cents)=> (cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+  const cartCount = document.getElementById('cartCount');
+  const cartItems = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  const overlay = document.getElementById('cartOverlay');
+  const drawer = document.getElementById('cartDrawer');
+
+  function openCart(){ overlay.style.display='block'; drawer.style.right='0'; }
+  function closeCart(){ overlay.style.display='none'; drawer.style.right='-420px'; }
+  document.getElementById('cartBtn').addEventListener('click', openCart);
+  document.getElementById('cartClose').addEventListener('click', closeCart);
+  overlay.addEventListener('click', closeCart);
+
+  function render(){
+    cartCount.textContent = cart.reduce((s,i)=>s+i.quantity,0);
+    const total = cart.reduce((s,i)=>s+i.unit_amount*i.quantity,0);
+    cartTotal.textContent = fmt(total);
+    cartItems.innerHTML = cart.length ? cart.map((it,idx)=>`
+      <div style="border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); border-radius:14px; padding:10px;">
+        <div style="display:flex; justify-content:space-between; gap:10px;">
+          <div>
+            <div style="font-weight:900;">${it.name}</div>
+            <div style="opacity:.7; font-size:12px;">${fmt(it.unit_amount)} • x${it.quantity}</div>
+          </div>
+          <button data-rm="${idx}" style="border:none; cursor:pointer; border-radius:12px; padding:8px 10px; background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.14);">Retirer</button>
+        </div>
+      </div>
+    `).join('') : '<div style="opacity:.7; font-size:13px;">Ton panier est vide.</div>';
+
+    cartItems.querySelectorAll('button[data-rm]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        cart.splice(Number(b.dataset.rm),1);
+        render();
+      });
+    });
+  }
+
+  // Attach "Add to cart" buttons to existing cards:
+  // We'll add small buttons into each pricing card using DOM query.
+  const priceCards = document.querySelectorAll('[data-plan]');
+  // If page doesn't have data-plan, fallback by searching buttons containing "Choisir"
+  const candidates = priceCards.length ? priceCards : document.querySelectorAll('button, a');
+  candidates.forEach(el=>{
+    const label=(el.textContent||'').toLowerCase();
+    if(label.includes('choisir') || label.includes('sélectionner') || label.includes('prendre')){
+      // no-op; site might already have CTA
+    }
+  });
+
+  // A safe function to add items (called by our injected "Ajouter au panier" buttons)
+  window.addToCart = function(name, euros){
+    const unit_amount = Math.round(Number(euros)*100);
+    const existing = cart.find(i=>i.name===name && i.unit_amount===unit_amount);
+    if(existing) existing.quantity += 1;
+    else cart.push({ name, unit_amount, quantity: 1 });
+    render();
+    openCart();
+  }
+
+  render();
+
+  // Stripe
+  document.getElementById('payStripe').addEventListener('click', async ()=>{
+    if(!cart.length){ alert("Panier vide."); return; }
+    const resp = await fetch('/api/create-checkout-session', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ items: cart })
+    });
+    const json = await resp.json();
+    if(!resp.ok){ alert("Erreur paiement: " + (json.error||resp.status)); return; }
+    window.location.href = json.url;
+  });
+
+  // PayPal
+  const cfg = window.APP_CONFIG || {};
+  if(cfg.PAYPAL_CLIENT_ID && cfg.PAYPAL_CLIENT_ID !== "YOUR_PAYPAL_CLIENT_ID"){
+    const s=document.createElement('script');
+    s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.PAYPAL_CLIENT_ID)}&currency=EUR`;
+    s.onload = () => {
+      document.getElementById('paypalHint').style.display='none';
+      paypal.Buttons({
+        createOrder: async () => {
+          const resp = await fetch('/api/paypal-create-order', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ items: cart })
+          });
+          const json = await resp.json();
+          if(!resp.ok) throw new Error(json.error||resp.status);
+          return json.id;
+        },
+        onApprove: async (data) => {
+          const resp = await fetch('/api/paypal-capture-order', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ orderId: data.orderID })
+          });
+          const json = await resp.json();
+          if(!resp.ok){ alert("Erreur PayPal: " + (json.error||resp.status)); return; }
+          alert("Paiement PayPal confirmé ✅");
+          cart.length=0; render(); closeCart();
+        }
+      }).render('#paypalButtons');
+    };
+    document.head.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>

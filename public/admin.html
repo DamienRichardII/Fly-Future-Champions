@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin — Fly Future Champions</title>
+  <link rel="icon" href="assets/logo_transparent.png"/>
+  <style>
+    :root{
+      --bg:#071B3A;
+      --ink:#eef6ff;
+      --muted:rgba(238,246,255,.72);
+      --glass:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.14);
+      --accent:#1a6bff;
+      --shadow:0 18px 60px rgba(0,0,0,.30);
+      --r:18px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 650px at 12% 10%, rgba(26,107,255,.32) 0%, rgba(26,107,255,0) 60%),
+        radial-gradient(900px 520px at 88% 18%, rgba(16,74,155,.26) 0%, rgba(16,74,155,0) 58%),
+        linear-gradient(180deg, #061b3a 0%, #0b2e5f 40%, #0a2a55 100%);
+      color:var(--ink);
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px;
+      background: linear-gradient(180deg, rgba(6,27,58,.80), rgba(6,27,58,.20));
+      border-bottom:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+    }
+    header .brand{display:flex; align-items:center; gap:12px;}
+    header img{height:54px; width:auto;}
+    header a{color:var(--ink); text-decoration:none; opacity:.9}
+    header a:hover{opacity:1}
+    .wrap{max-width:1100px; margin:0 auto; padding:22px 20px 44px;}
+    .grid{display:grid; grid-template-columns: 360px 1fr; gap:18px; align-items:start;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background:var(--glass);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    h1{font-size:20px; margin:0 0 10px;}
+    h2{font-size:14px; margin:0 0 10px; color:rgba(238,246,255,.92);}
+    p, label{color:var(--muted); margin:0 0 10px; font-size:13px; line-height:1.45;}
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color:var(--ink);
+      outline:none;
+      margin:6px 0 10px;
+    }
+    input::placeholder{color:rgba(238,246,255,.55);}
+    button{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      background: rgba(26,107,255,.32);
+      color:var(--ink);
+      font-weight:700;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.18);
+      transition: transform .14s ease, background .14s ease;
+    }
+    button:hover{transform: translateY(-1px); background: rgba(26,107,255,.42);}
+    .row{display:flex; gap:10px; align-items:center;}
+    .row > *{flex:1}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color:rgba(238,246,255,.9);
+      font-size:12px;
+    }
+    .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:10px;}
+    .toolbar .left{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .toolbar .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .toolbar input{margin:0; max-width:180px;}
+    .smallbtn{
+      width:auto;
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      font-weight:700;
+    }
+    .smallbtn:hover{background: rgba(255,255,255,.12);}
+    table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.14);}
+    thead{background: rgba(255,255,255,.07);}
+    th, td{
+      padding:10px 10px;
+      font-size:12px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      color:rgba(238,246,255,.92);
+      vertical-align:top;
+    }
+    tbody tr:hover{background: rgba(255,255,255,.05);}
+    .muted{color:rgba(238,246,255,.66);}
+    .hidden{display:none !important;}
+    .toast{
+      position:fixed; right:14px; bottom:14px;
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:14px;
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow);
+      max-width: 420px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="assets/logo_transparent.png" alt="Fly Future Champions"/>
+    <div>
+      <div style="font-weight:900; letter-spacing:.2px;">ADMIN</div>
+      <div class="muted" style="font-size:12px;">Inscriptions • PDF • Paiements</div>
+    </div>
+  </div>
+  <a href="index.html" class="pill">↩ Retour site</a>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <div class="card" id="authCard">
+      <h1>Connexion</h1>
+      <p>Connecte-toi pour accéder à la liste des inscrits en temps réel.</p>
+      <label>Email</label>
+      <input id="email" type="email" placeholder="admin@..." />
+      <label>Mot de passe</label>
+      <input id="password" type="password" placeholder="••••••••" />
+      <button id="loginBtn">Se connecter</button>
+      <p class="muted" style="margin-top:10px;">Astuce : crée ton utilisateur dans Supabase Auth.</p>
+    </div>
+
+    <div class="card hidden" id="dashCard">
+      <div class="toolbar">
+        <div class="left">
+          <span class="pill" id="statusPill">🟦 Connecté</span>
+          <span class="pill" id="countPill">0 inscrits</span>
+        </div>
+        <div class="right">
+          <input id="dateFilter" type="date" />
+          <button class="smallbtn" id="exportPdfBtn">Exporter PDF</button>
+          <button class="smallbtn" id="paymentsBtn">Configurer paiements</button>
+          <button class="smallbtn" id="logoutBtn">Déconnexion</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Année</th>
+            <th>Email</th>
+            <th>Tél.</th>
+            <th>Ville</th>
+            <th>Niveau</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <p class="muted" style="margin-top:10px;">La table se met à jour en temps réel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+  // Config (inject from environment at build time is not available in static HTML)
+  // So we read from a small config file or ask you to paste values here.
+  // We use a global window.APP_CONFIG created by assets/app-config.js.
+</script>
+<script src="assets/app-config.js"></script>
+<script>
+  const toastEl = document.getElementById('toast');
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.remove('hidden');
+    setTimeout(()=>toastEl.classList.add('hidden'), 2800);
+  }
+
+  const cfg = window.APP_CONFIG || {};
+  if(!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY){
+    toast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
+  }
+  const supabase = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+
+  const authCard = document.getElementById('authCard');
+  const dashCard = document.getElementById('dashCard');
+
+  const emailEl = document.getElementById('email');
+  const passEl = document.getElementById('password');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const dateFilter = document.getElementById('dateFilter');
+  const tbody = document.getElementById('tbody');
+  const countPill = document.getElementById('countPill');
+  const exportPdfBtn = document.getElementById('exportPdfBtn');
+  const paymentsBtn = document.getElementById('paymentsBtn');
+
+  dateFilter.value = '2026-02-22';
+
+  let channel = null;
+
+  async function refresh(){
+    const date = dateFilter.value;
+    const { data, error } = await supabase
+      .from('detection_registrations')
+      .select('*')
+      .eq('detection_date', date)
+      .order('created_at', { ascending: false });
+
+    if(error){
+      toast("Erreur lecture: " + error.message);
+      return;
+    }
+
+    countPill.textContent = `${(data||[]).length} inscrits`;
+    tbody.innerHTML = (data||[]).map(r => `
+      <tr>
+        <td class="muted">${r.detection_date || ''}</td>
+        <td>${(r.last_name||'').toUpperCase()}</td>
+        <td>${r.first_name||''}</td>
+        <td class="muted">${r.birth_year||''}</td>
+        <td class="muted">${r.email||''}</td>
+        <td class="muted">${r.phone||''}</td>
+        <td class="muted">${r.city||''}</td>
+        <td class="muted">${r.level||''}</td>
+      </tr>
+    `).join('');
+  }
+
+  function subscribeRealtime(){
+    if(channel){ supabase.removeChannel(channel); channel=null; }
+    channel = supabase.channel('registrations-realtime')
+      .on('postgres_changes', { event:'*', schema:'public', table:'detection_registrations' }, payload => {
+        // Just refresh current filtered date
+        refresh();
+      })
+      .subscribe();
+  }
+
+  async function showDash(){
+    authCard.classList.add('hidden');
+    dashCard.classList.remove('hidden');
+    await refresh();
+    subscribeRealtime();
+  }
+
+  async function showAuth(){
+    authCard.classList.remove('hidden');
+    dashCard.classList.add('hidden');
+    if(channel){ supabase.removeChannel(channel); channel=null; }
+  }
+
+  loginBtn.addEventListener('click', async () => {
+    const email = emailEl.value.trim();
+    const password = passEl.value;
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if(error){
+      toast("Connexion refusée: " + error.message);
+      return;
+    }
+    toast("Connecté ✅");
+    showDash();
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    toast("Déconnecté");
+    showAuth();
+  });
+
+  dateFilter.addEventListener('change', refresh);
+
+  exportPdfBtn.addEventListener('click', () => {
+    const date = dateFilter.value;
+    window.open(`/api/export-pdf?date=${encodeURIComponent(date)}`, '_blank');
+  });
+
+  paymentsBtn.addEventListener('click', async () => {
+    toast("Ouverture Stripe…");
+    const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
+    const json = await resp.json();
+    if(!resp.ok){
+      toast("Erreur paiements: " + (json.error||resp.status));
+      return;
+    }
+    window.location.href = json.url;
+  });
+
+  // On load: if session exists
+  (async () => {
+    const { data } = await supabase.auth.getSession();
+    if(data && data.session){
+      showDash();
+    }
+  })();
+</script>
+</body>
+</html>
