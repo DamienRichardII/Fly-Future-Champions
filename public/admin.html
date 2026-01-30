@@ -187,15 +187,11 @@
 
 <div class="toast hidden" id="toast"></div>
 
-<script>
-  // Config (inject from environment at build time is not available in static HTML)
-  // So we read from a small config file or ask you to paste values here.
-  // We use a global window.APP_CONFIG created by assets/app-config.js.
-</script>
+
 <script src="assets/app-config.js"></script>
 <script>
   const toastEl = document.getElementById('toast');
-  function toast(msg){
+  function showToast(msg){
     toastEl.textContent = msg;
     toastEl.classList.remove('hidden');
     setTimeout(()=>toastEl.classList.add('hidden'), 2800);
@@ -203,9 +199,11 @@
 
   const cfg = window.APP_CONFIG || {};
   if(!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY){
-    toast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
+    showToast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
   }
-  const supabase = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+
+  // ✅ IMPORTANT: évite le conflit "supabase already declared"
+  const supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
   const authCard = document.getElementById('authCard');
   const dashCard = document.getElementById('dashCard');
@@ -226,14 +224,14 @@
 
   async function refresh(){
     const date = dateFilter.value;
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('detection_registrations')
       .select('*')
       .eq('detection_date', date)
       .order('created_at', { ascending: false });
 
     if(error){
-      toast("Erreur lecture: " + error.message);
+      showToast("Erreur lecture: " + error.message);
       return;
     }
 
@@ -253,10 +251,14 @@
   }
 
   function subscribeRealtime(){
-    if(channel){ supabase.removeChannel(channel); channel=null; }
-    channel = supabase.channel('registrations-realtime')
-      .on('postgres_changes', { event:'*', schema:'public', table:'detection_registrations' }, payload => {
-        // Just refresh current filtered date
+    if(channel){
+      supabaseClient.removeChannel(channel);
+      channel = null;
+    }
+
+    channel = supabaseClient
+      .channel('registrations-realtime')
+      .on('postgres_changes', { event:'*', schema:'public', table:'detection_registrations' }, () => {
         refresh();
       })
       .subscribe();
@@ -272,24 +274,29 @@
   async function showAuth(){
     authCard.classList.remove('hidden');
     dashCard.classList.add('hidden');
-    if(channel){ supabase.removeChannel(channel); channel=null; }
+    if(channel){
+      supabaseClient.removeChannel(channel);
+      channel = null;
+    }
   }
 
   loginBtn.addEventListener('click', async () => {
     const email = emailEl.value.trim();
     const password = passEl.value;
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if(error){
-      toast("Connexion refusée: " + error.message);
+      showToast("Connexion refusée: " + error.message);
       return;
     }
-    toast("Connecté ✅");
+
+    showToast("Connecté ✅");
     showDash();
   });
 
   logoutBtn.addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    toast("Déconnecté");
+    await supabaseClient.auth.signOut();
+    showToast("Déconnecté");
     showAuth();
   });
 
@@ -301,11 +308,11 @@
   });
 
   paymentsBtn.addEventListener('click', async () => {
-    toast("Ouverture Stripe…");
+    showToast("Ouverture Stripe…");
     const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
     const json = await resp.json();
     if(!resp.ok){
-      toast("Erreur paiements: " + (json.error||resp.status));
+      showToast("Erreur paiements: " + (json.error||resp.status));
       return;
     }
     window.location.href = json.url;
@@ -313,7 +320,7 @@
 
   // On load: if session exists
   (async () => {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await supabaseClient.auth.getSession();
     if(data && data.session){
       showDash();
     }
