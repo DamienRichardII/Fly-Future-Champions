@@ -1412,8 +1412,14 @@ age: 'Garçons & Filles',
         return;
       }
       // success UI (use existing toast if present)
-      if(window.toast){ window.toast("Inscription envoyée ✅"); }
-      else alert("Inscription envoyée ✅");
+      if (typeof window.showToast === "function") {
+  window.showToast("Pré-inscription envoyée ✅", "Inscription enregistrée dans la base.", [
+    { label: "OK", action: () => {} }
+  ]);
+} else {
+  alert("Inscription envoyée ✅");
+}
+
       form.reset();
     }catch(err){
       alert("Erreur réseau: " + err.message);
