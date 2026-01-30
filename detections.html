@@ -1301,6 +1301,7 @@ age: 'Garçons & Filles',
       clearTimeout(toastTimer);
       toastTimer = setTimeout(()=> t.classList.remove('show'), 9000);
     }
+    window.showToast = showToast;
     function hideToast(){ $('#toast').classList.remove('show'); }
 
     $('#privacyLink').addEventListener('click', (e)=>{
