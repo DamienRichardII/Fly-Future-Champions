@@ -1114,7 +1114,7 @@ age: 'Garçons & Filles',
     }
 
     // submit
-    $('#signupForm').addEventListener('submit', (e)=>{
+    $('#signupForm').addEventListener('submit', async (e)=>{
       e.preventDefault();
 
       const data = collectForm();
@@ -1125,10 +1125,34 @@ age: 'Garçons & Filles',
       }
 
       // Save locally (no backend)
-      const key = 'ffc_signups_v1';
-      const arr = JSON.parse(localStorage.getItem(key) || '[]');
-      arr.push({...data, createdAt: new Date().toISOString()});
-      localStorage.setItem(key, JSON.stringify(arr));
+            // --- Send to backend (Supabase via Vercel API) ---
+      const payload = {
+        detection_date: data.eventDate, // "2026-02-22"
+        first_name: data.firstName,
+        last_name: data.lastName,
+        birth_year: data.birth ? parseInt(String(data.birth).slice(0,4), 10) : null, // YYYY-MM-DD -> YYYY
+        gender: data.gender,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        level: data.level,
+        position: data.position,
+        height_cm: data.height ? parseInt(data.height, 10) : null,
+        notes: [data.goal, data.message].filter(Boolean).join(" — "),
+      };
+
+      const resp = await fetch('/api/register-detection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        showToast('Erreur inscription', (json.error || resp.status), [{ label:'OK', action: hideToast }]);
+        return;
+      }
+
 
       const summary = buildSummary(data);
       const blob = new Blob([summary], {type:'text/plain;charset=utf-8'});
@@ -1348,90 +1372,103 @@ age: 'Garçons & Filles',
   </script>
 <script>
 /* --- Vercel backend hookup: send registrations to /api/register-detection --- */
-(function(){
+(function () {
   const form = document.querySelector('form#inscriptionForm') || document.querySelector('form');
-  if(!form) return;
+  if (!form) return;
 
-  // Try detect detection date from selected event or hidden field
-  function getSelectedDate(){
-    const hidden = form.querySelector('input[name="detection_date"]') || form.querySelector('#detection_date');
-    if(hidden && hidden.value) return hidden.value;
-    // Try from UI element
-    const sel = document.querySelector('[data-selected-date]');
-    if(sel) return sel.getAttribute('data-selected-date');
-    // fallback to next date in page (22 feb 2026)
+  function getSelectedDate() {
+    const hidden = form.querySelector('input[name="detection_date"]') || document.getElementById('detection_date');
+    if (hidden && hidden.value) return hidden.value;
     return "2026-02-22";
   }
 
-  // Ensure there's a hidden field
-  if(!form.querySelector('input[name="detection_date"]')){
-    const i = document.createElement('input');
-    i.type='hidden';
-    i.name='detection_date';
-    i.value = getSelectedDate();
-    form.appendChild(i);
+  // Ensure hidden field exists
+  let hidden = form.querySelector('input[name="detection_date"]');
+  if (!hidden) {
+    hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = 'detection_date';
+    form.appendChild(hidden);
   }
+  hidden.value = getSelectedDate();
+
+  // Helper: read by id first, fallback to name
+  const val = (key) => {
+    const byId = document.getElementById(key);
+    if (byId && byId.value != null) return String(byId.value).trim();
+    const byName = form.querySelector(`[name="${key}"]`);
+    if (byName && byName.value != null) return String(byName.value).trim();
+    return "";
+  };
+
+  const toInt = (x) => {
+    const n = parseInt(String(x || "").trim(), 10);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  console.log("✅ Handler /api/register-detection attaché");
 
   form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const get = (id) => (document.getElementById(id)?.value || "").trim();
-  const getInt = (id) => {
-    const x = parseInt(get(id), 10);
-    return Number.isFinite(x) ? x : null;
-  };
+    // IMPORTANT: adapte ces IDs à ceux de ton formulaire
+    const mapped = {
+      detection_date: getSelectedDate(),
 
-  const mapped = {
-    detection_date: getSelectedDate(),
-    first_name: get("prenom") || get("firstName") || get("first_name"),
-    last_name: get("nom") || get("lastName") || get("last_name"),
-    birth_year: getInt("annee") || getInt("birth_year") || getInt("annee_naissance"),
-    gender: get("sexe") || get("gender"),
-    email: get("email"),
-    phone: get("telephone") || get("phone") || get("tel"),
-    city: get("ville") || get("city"),
-    level: get("niveau") || get("level"),
-    position: get("poste") || get("position"),
-    height_cm: getInt("taille") || getInt("height_cm") || getInt("heightCm"),
-    notes: get("notes") || get("message")
-  };
+      // IDs attendus côté formulaire (ex: firstName/lastName)
+      first_name: val("firstName") || val("prenom") || val("first_name"),
+      last_name:  val("lastName")  || val("nom")    || val("last_name"),
 
-  console.log("MAPPED =>", mapped);
-alert(JSON.stringify(mapped, null, 2));
+      // Si tu as une date complète (01/03/1999), ton API attend birth_year (int)
+      // => on prend l'année depuis un champ "birth_year" ou on extrait depuis "birthDate"
+      birth_year: toInt(val("birth_year")) || (val("birthDate") ? toInt(val("birthDate").slice(-4)) : null),
 
-console.log(Object.fromEntries(new FormData(form).entries()));
+      gender: val("gender") || val("sexe"),
+      email: val("email"),
+      phone: val("phone") || val("telephone") || val("tel"),
+      city: val("city") || val("ville"),
+      level: val("level") || val("niveau"),
+      position: val("position") || val("poste"),
+      height_cm: toInt(val("height_cm")) || toInt(val("taille")) || toInt(val("heightCm")),
+      notes: val("notes") || val("message")
+    };
 
+    console.log("📦 Payload envoyé:", mapped);
 
-  const btn = form.querySelector('button[type="submit"]');
-  if (btn) { btn.disabled = true; btn.dataset._txt = btn.textContent; btn.textContent = "Envoi…"; }
+    // Bloque le bouton pendant l’envoi
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.dataset._txt = btn.textContent; btn.textContent = "Envoi…"; }
 
-  try {
-    const resp = await fetch('/api/register-detection', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(mapped)
-    });
+    try {
+      const resp = await fetch('/api/register-detection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mapped)
+      });
 
-    const json = await resp.json().catch(() => ({}));
+      const json = await resp.json().catch(() => ({}));
+      console.log("✅ API response:", resp.status, json);
 
-    if (!resp.ok) {
-      alert("Erreur inscription: " + (json.error || resp.status));
-      return;
+      if (!resp.ok) {
+        alert("Erreur inscription: " + (json.error || resp.status));
+        return;
+      }
+
+      // Si TU veux garder ton UI “Pré-inscription envoyée ✅”, laisse ça :
+      if (window.toast) window.toast("Inscription envoyée ✅");
+      else alert("Inscription envoyée ✅");
+
+      form.reset();
+      hidden.value = getSelectedDate();
+
+    } catch (err) {
+      alert("Erreur réseau: " + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset._txt || "Envoyer"; }
     }
+  });
 
-    if (window.toast) window.toast("Inscription envoyée ✅");
-    else alert("Inscription envoyée ✅");
-
-    form.reset();
-
-  } catch (err) {
-    alert("Erreur réseau: " + err.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = btn.dataset._txt || "Envoyer"; }
-  }
-});
-
-});
+})();
 </script>
 </body>
 </html>
