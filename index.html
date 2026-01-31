@@ -328,15 +328,18 @@
 
     /* Intro animation overlay */
     .intro{
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      background: #fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transition: opacity .55s ease, visibility .55s ease;
-    }
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#fff;
+  display:none; /* ✅ caché par défaut */
+  align-items:center;
+  justify-content:center;
+  transition: opacity .55s ease, visibility .55s ease;
+}
+.intro.play{ display:flex; } /* ✅ on l'affiche seulement si on joue */
+.intro.hidden{ opacity:0; visibility:hidden; }
+
     .intro.hidden{
       opacity:0;
       visibility:hidden;
@@ -451,6 +454,27 @@
 </footer>
 </div>
 <script>
+
+  const intro = document.getElementById('intro');
+const INTRO_KEY = "ffc_intro_played";
+
+if (!intro) return;
+
+try{
+  if (sessionStorage.getItem(INTRO_KEY) === "1") {
+    intro.remove(); // ✅ supprime carrément l’overlay (0 risque)
+  } else {
+    sessionStorage.setItem(INTRO_KEY, "1");
+    intro.classList.add("play"); // ✅ on l’affiche uniquement la 1ère fois
+    // ⚠️ ici il faut remettre ton script d’animation (requestAnimationFrame(step))
+  }
+}catch(e){
+  // si sessionStorage bloqué, on joue comme d’habitude
+  intro.classList.add("play");
+  // et on lance l’animation
+}
+
+
   // Footer year
   document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -464,5 +488,210 @@
     }, {passive:true});
   }
 </script>
+<script>
+/* ✅ Intro animation: joue UNE SEULE FOIS (même si tu reviens sur Accueil) */
+(function () {
+  const intro = document.getElementById('intro');
+  if (!intro) return;
+
+  // 🔒 Clé persistante (ne rejoue plus jamais sur ce navigateur)
+  const INTRO_KEY = "ffc_intro_played_v2";
+
+  // Si déjà joué -> on SUPPRIME l'overlay et on ne lance rien
+  try {
+    if (localStorage.getItem(INTRO_KEY) === "1") {
+      intro.remove();     // ✅ plus d'overlay, plus d'animation possible
+      return;
+    }
+    // Marque comme joué tout de suite (même si l'utilisateur navigue vite)
+    localStorage.setItem(INTRO_KEY, "1");
+  } catch (e) {
+    // si storage bloqué, on laisse jouer (cas rare)
+  }
+
+  const canvas = document.getElementById('introCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const W = () => window.innerWidth;
+  const H = () => window.innerHeight;
+
+  // Ball physics
+  const ball = {
+    r: 36,
+    x: Math.max(80, W() * 0.18),
+    y: -80,
+    vx: 0,
+    vy: 0,
+    spin: 0,
+    w: 0,
+    bounces: 0,
+    phase: 'drop' // drop -> roll -> done
+  };
+
+  const floorMargin = 46;
+  const g = 1800;
+  const restitution = 0.68;
+  const friction = 0.995;
+
+  let last = performance.now();
+  let doneAt = null;
+  let rafId = null;
+
+  function drawBall(x, y, r, spin) {
+    ctx.clearRect(0, 0, W(), H());
+
+    const grdBg = ctx.createRadialGradient(W()*0.5, H()*0.4, 40, W()*0.5, H()*0.4, Math.max(W(),H()));
+    grdBg.addColorStop(0, 'rgba(11,47,85,0.06)');
+    grdBg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grdBg;
+    ctx.fillRect(0,0,W(),H());
+
+    const floorY = H() - floorMargin;
+    const shadowW = r * 2.1;
+    const shadowH = r * 0.42;
+    const dy = Math.max(0, Math.min(1, (floorY - y) / 320));
+    const alpha = 0.22 * (1 - dy);
+
+    ctx.save();
+    ctx.translate(x, floorY + r*0.55);
+    ctx.scale(1, 0.65);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, shadowW, shadowH, 0, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(8,30,56,${alpha.toFixed(3)})`;
+    ctx.fill();
+    ctx.restore();
+
+    const grd = ctx.createRadialGradient(x - r*0.35, y - r*0.45, r*0.2, x, y, r*1.25);
+    grd.addColorStop(0, '#2D84E6');
+    grd.addColorStop(0.55, '#14508F');
+    grd.addColorStop(1, '#0B2F55');
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(spin);
+    ctx.lineWidth = 2.6;
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+
+    ctx.beginPath();
+    ctx.arc(0, 0, r*0.78, -Math.PI*0.15, Math.PI*1.15);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(0, 0, r*0.78, Math.PI*0.85, Math.PI*2.15);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-r*0.15, -r);
+    ctx.bezierCurveTo(-r*0.6, -r*0.35, -r*0.6, r*0.35, -r*0.15, r);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(r*0.15, -r);
+    ctx.bezierCurveTo(r*0.6, -r*0.35, r*0.6, r*0.35, r*0.15, r);
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.moveTo(0, floorY + r*1.1);
+    ctx.lineTo(W(), floorY + r*1.1);
+    ctx.strokeStyle = 'rgba(11,47,85,0.08)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function finishAndRemove() {
+    // ✅ stop animation + enlève overlay
+    if (rafId) cancelAnimationFrame(rafId);
+    intro.classList.add('hidden');
+    setTimeout(() => intro.remove(), 700); // laisse le fade-out si tu veux
+  }
+
+  function step(now) {
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+
+    const floorY = H() - floorMargin;
+
+    if (ball.phase !== 'done') {
+      ball.vy += g * dt;
+      ball.x += ball.vx * dt;
+      ball.y += ball.vy * dt;
+
+      if (ball.y + ball.r >= floorY) {
+        ball.y = floorY - ball.r;
+
+        if (ball.phase === 'drop') {
+          ball.vy = -ball.vy * restitution;
+          ball.bounces += 1;
+          ball.vx += (ball.bounces === 1 ? 80 : ball.bounces === 2 ? 120 : 0);
+          ball.w = Math.min(0.22, Math.abs(ball.vy) / 2800);
+
+          if (ball.bounces >= 3 && Math.abs(ball.vy) < 420) {
+            ball.phase = 'roll';
+            ball.vy = 0;
+            ball.vx = Math.max(520, W() * 0.42);
+          }
+        } else if (ball.phase === 'roll') {
+          ball.vy = 0;
+          ball.vx *= friction;
+          if (ball.vx < 420) ball.vx = 420;
+        }
+      }
+
+      if (ball.x < ball.r + 8) {
+        ball.x = ball.r + 8;
+        ball.vx = Math.abs(ball.vx);
+      }
+
+      ball.spin += (ball.vx / Math.max(1, ball.r)) * dt;
+      if (ball.w > 0) ball.w = Math.max(0, ball.w - dt * 0.8);
+
+      ctx.save();
+      if (ball.w > 0) {
+        ctx.translate(ball.x, ball.y);
+        ctx.scale(1 + ball.w, 1 - ball.w);
+        ctx.translate(-ball.x, -ball.y);
+      }
+      drawBall(ball.x, ball.y, ball.r, ball.spin);
+      ctx.restore();
+
+      if (ball.phase === 'roll' && ball.x - ball.r > W() + 20) {
+        ball.phase = 'done';
+        doneAt = now;
+      }
+    }
+
+    if (ball.phase === 'done') {
+      const t = (now - doneAt) / 1000;
+      if (t > 0.15) finishAndRemove();
+      return;
+    }
+
+    rafId = requestAnimationFrame(step);
+  }
+
+  rafId = requestAnimationFrame(step);
+})();
+</script>
+
 </body>
 </html>
