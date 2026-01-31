@@ -470,6 +470,23 @@
     const intro = document.getElementById('intro');
     const canvas = document.getElementById('introCanvas');
 
+    (function () {
+  const intro = document.getElementById('intro');
+
+  // ✅ Ne joue l'intro qu'une seule fois par session (onglet)
+  const INTRO_KEY = "ffc_intro_played";
+  if (sessionStorage.getItem(INTRO_KEY) === "1") {
+    intro.classList.add('hidden');   // cache directement
+    return;                          // stoppe l'animation
+  }
+  sessionStorage.setItem(INTRO_KEY, "1");
+
+  const canvas = document.getElementById('introCanvas');
+  const ctx = canvas.getContext('2d');
+  
+})();
+
+
     // 🔒 Flag: si déjà joué une fois → on saute l'animation
     const INTRO_KEY = "ffc_intro_played_v1";
     if (localStorage.getItem(INTRO_KEY) === "1") {
