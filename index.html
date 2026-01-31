@@ -451,52 +451,24 @@
 </footer>
 </div>
 <script>
-
-    // Footer year
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Subtle parallax for court background
-  const courtBg = document.querySelector('.court-bg');
-  if (courtBg){
-    window.addEventListener('mousemove', (e)=>{
-      const x = (e.clientX / window.innerWidth - 0.5) * 18;
-      const y = (e.clientY / window.innerHeight - 0.5) * 18;
-      courtBg.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    }, {passive:true});
-  }
-
-  // --- Intro animation: play ONLY ONCE (no repeat) ---
+// --- Intro animation: blue basketball drops, bounces, then rolls left → right ---
   (function () {
     const intro = document.getElementById('intro');
-    const canvas = document.getElementById('introCanvas');
+    if (!intro) return;
 
-    (function () {
-  const intro = document.getElementById('intro');
-
-  // ✅ Ne joue l'intro qu'une seule fois par session (onglet)
-  const INTRO_KEY = "ffc_intro_played";
-  if (sessionStorage.getItem(INTRO_KEY) === "1") {
-    intro.classList.add('hidden');   // cache directement
-    return;                          // stoppe l'animation
-  }
-  sessionStorage.setItem(INTRO_KEY, "1");
-
-  const canvas = document.getElementById('introCanvas');
-  const ctx = canvas.getContext('2d');
-  
-})();
-
-
-    // 🔒 Flag: si déjà joué une fois → on saute l'animation
-    const INTRO_KEY = "ffc_intro_played_v1";
-    if (localStorage.getItem(INTRO_KEY) === "1") {
-      intro.classList.add('hidden');
-      return;
+    // ✅ Joue l'intro une seule fois par session (onglet)
+    const INTRO_KEY = "ffc_intro_played";
+    try {
+      if (sessionStorage.getItem(INTRO_KEY) === "1") {
+        intro.classList.add('hidden');     // cache l'overlay
+        return;                            // stoppe TOUT
+      }
+      sessionStorage.setItem(INTRO_KEY, "1");
+    } catch (e) {
+      // si storage bloqué, on laisse jouer
     }
 
-    // On marque tout de suite pour éviter que ça rejoue au refresh
-    localStorage.setItem(INTRO_KEY, "1");
-
+    const canvas = document.getElementById('introCanvas');
     const ctx = canvas.getContext('2d');
 
     function resize() {
@@ -511,7 +483,6 @@
     const W = () => window.innerWidth;
     const H = () => window.innerHeight;
 
-    // Ball physics
     const ball = {
       r: 36,
       x: Math.max(80, W() * 0.18),
@@ -521,12 +492,12 @@
       spin: 0,
       w: 0,
       bounces: 0,
-      phase: 'drop' // drop -> roll -> done
+      phase: 'drop'
     };
 
     const floorMargin = 46;
-    const g = 1800;              // px/s^2
-    const restitution = 0.68;    // bounce energy
+    const g = 1800;
+    const restitution = 0.68;
     const friction = 0.995;
 
     let last = performance.now();
@@ -542,12 +513,11 @@
       ctx.fillRect(0,0,W(),H());
 
       const floorY = H() - floorMargin;
-
-      // shadow
       const shadowW = r * 2.1;
       const shadowH = r * 0.42;
       const dy = Math.max(0, Math.min(1, (floorY - y) / 320));
       const alpha = 0.22 * (1 - dy);
+
       ctx.save();
       ctx.translate(x, floorY + r*0.55);
       ctx.scale(1, 0.65);
@@ -557,7 +527,6 @@
       ctx.fill();
       ctx.restore();
 
-      // ball gradient
       const grd = ctx.createRadialGradient(x - r*0.35, y - r*0.45, r*0.2, x, y, r*1.25);
       grd.addColorStop(0, '#2D84E6');
       grd.addColorStop(0.55, '#14508F');
@@ -568,12 +537,10 @@
       ctx.fillStyle = grd;
       ctx.fill();
 
-      // highlight rim
       ctx.lineWidth = 2;
       ctx.strokeStyle = 'rgba(255,255,255,0.35)';
       ctx.stroke();
 
-      // seams
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(spin);
@@ -600,7 +567,6 @@
 
       ctx.restore();
 
-      // floor line (subtle)
       ctx.beginPath();
       ctx.moveTo(0, floorY + r*1.1);
       ctx.lineTo(W(), floorY + r*1.1);
@@ -647,8 +613,7 @@
           ball.vx = Math.abs(ball.vx);
         }
 
-        const spinSpeed = (ball.vx / Math.max(1, ball.r)) * dt;
-        ball.spin += spinSpeed;
+        ball.spin += (ball.vx / Math.max(1, ball.r)) * dt;
 
         if (ball.w > 0) ball.w = Math.max(0, ball.w - dt * 0.8);
 
@@ -668,7 +633,6 @@
       }
 
       if (ball.phase === 'done') {
-        if (!doneAt) doneAt = now;
         const t = (now - doneAt) / 1000;
         if (t > 0.15) intro.classList.add('hidden');
         if (t > 0.9) return;
@@ -679,7 +643,6 @@
 
     requestAnimationFrame(step);
   })();
-    
-  </script>
+      </script>
 </body>
 </html>
