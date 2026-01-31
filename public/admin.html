@@ -123,6 +123,16 @@
       box-shadow:var(--shadow);
       max-width: 420px;
     }
+
+    .smallbtn.danger{
+  background: rgba(255, 71, 87, .18);
+  border: 1px solid rgba(255, 71, 87, .35);
+}
+.smallbtn.danger:hover{
+  background: rgba(255, 71, 87, .28);
+}
+
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -161,6 +171,7 @@
           <input id="dateFilter" type="date" />
           <button class="smallbtn" id="exportPdfBtn">Exporter PDF</button>
           <button class="smallbtn" id="paymentsBtn">Configurer paiements</button>
+          <button class="smallbtn danger" id="clearBtn">🗑 Nettoyer</button>
           <button class="smallbtn" id="logoutBtn">Déconnexion</button>
         </div>
       </div>
@@ -217,6 +228,8 @@
   const countPill = document.getElementById('countPill');
   const exportPdfBtn = document.getElementById('exportPdfBtn');
   const paymentsBtn = document.getElementById('paymentsBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
 
   dateFilter.value = '2026-02-22';
 
@@ -317,6 +330,51 @@
     }
     window.location.href = json.url;
   });
+
+  clearBtn.addEventListener('click', async () => {
+  // Choix: supprimer juste la date affichée (par défaut)
+  const date = dateFilter.value;
+
+  const mode = confirm(
+    `OK = supprimer les inscriptions du ${date}\nAnnuler = ne rien faire`
+  );
+  if (!mode) return;
+
+  const sure = prompt(`Tape SUPPRIMER pour confirmer la suppression du ${date}`);
+  if (sure !== 'SUPPRIMER') {
+    showToast('Suppression annulée');
+    return;
+  }
+
+  showToast('Suppression en cours…');
+
+  const { data } = await supabaseClient.auth.getSession();
+  const session = data?.session;
+  if (!session) {
+    showToast('Session expirée, reconnecte-toi.');
+    showAuth();
+    return;
+  }
+
+  const resp = await fetch('/api/admin-clear-registrations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ scope: 'date', date })
+  });
+
+  const json = await resp.json().catch(() => ({}));
+  if (!resp.ok) {
+    showToast('Erreur suppression: ' + (json.error || resp.status));
+    return;
+  }
+
+  showToast(`✅ Supprimé: ${json.deleted} inscription(s)`);
+  refresh();
+});
+
 
   // On load: if session exists
   (async () => {
