@@ -577,6 +577,53 @@
       .mini{grid-template-columns: 1fr}
       .pill{display:none}
     }
+    .mobileMenu{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding: 18px;
+}
+.mobileMenu.hidden{ display:none; }
+
+.mobileMenuCard{
+  width:min(520px, 92vw);
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(11,47,85,.14);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 24px 60px rgba(8,30,56,.18);
+}
+
+.mobileMenuTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 10px;
+  color: #0B2F55;
+}
+
+.mobileMenuCard a{
+  display:block;
+  padding: 12px 12px;
+  border-radius: 12px;
+  text-decoration:none;
+  color: rgba(11,19,32,.86);
+  font-weight: 700;
+}
+.mobileMenuCard a:hover{
+  background: rgba(11,47,85,.06);
+}
+
+/* Sur PC on cache le bouton menu */
+@media (min-width: 921px){
+  #menuBtn{ display:none; }
+}
+
   </style>
 </head>
 <body>
@@ -617,9 +664,26 @@
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.8 6.2a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
         </a>
         <button class="btn" id="scrollToForm">S'inscrire</button>
+        <button class="iconbtn" id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+
       </div>
     </div>
   </header>
+
+    <div class="mobileMenu hidden" id="mobileMenu" role="dialog" aria-modal="true">
+  <div class="mobileMenuCard">
+    <div class="mobileMenuTop">
+      <strong>Menu</strong>
+      <button class="iconbtn" id="menuClose" aria-label="Fermer">✕</button>
+    </div>
+
+    <a href="index.html">Accueil</a>
+    <a href="detections.html">Détections</a>
+    <a href="programmes.html">Programmes</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</div>
+
 
   <main class="wrap">
     <section class="hero">
@@ -1469,6 +1533,16 @@ age: 'Garçons & Filles',
   });
 
 })();
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuClose = document.getElementById('menuClose');
+
+if(menuBtn && mobileMenu && menuClose){
+  menuBtn.addEventListener('click', ()=> mobileMenu.classList.remove('hidden'));
+  menuClose.addEventListener('click', ()=> mobileMenu.classList.add('hidden'));
+  mobileMenu.addEventListener('click', (e)=>{ if(e.target === mobileMenu) mobileMenu.classList.add('hidden'); });
+}
+
 </script>
 </body>
 </html>
