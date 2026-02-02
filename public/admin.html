@@ -6,7 +6,6 @@
   <title>Admin — Fly Future Champions</title>
   <link rel="icon" href="assets/logo_transparent.png"/>
   <meta name="robots" content="noindex, nofollow">
-
   <style>
     :root{
       --bg:#071B3A;
@@ -43,7 +42,7 @@
     header a:hover{opacity:1}
 
     .wrap{max-width:1200px; margin:0 auto; padding:22px 20px 44px;}
-    .grid{display:grid; grid-template-columns: 360px 1fr; gap:18px; align-items:start;}
+    .grid{display:grid; grid-template-columns: 380px 1fr; gap:18px; align-items:start;}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
 
     .card{
@@ -53,6 +52,7 @@
       box-shadow:var(--shadow);
       padding:16px;
     }
+
     h1{font-size:20px; margin:0 0 10px;}
     h2{font-size:14px; margin:0 0 10px; color:rgba(238,246,255,.92);}
     p, label{color:var(--muted); margin:0 0 10px; font-size:13px; line-height:1.45;}
@@ -82,7 +82,9 @@
       transition: transform .14s ease, background .14s ease;
     }
     button:hover{transform: translateY(-1px); background: rgba(26,107,255,.42);}
-    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .row{display:flex; gap:10px; align-items:center;}
+    .row > *{flex:1}
 
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -91,10 +93,12 @@
       background: rgba(255,255,255,.08);
       color:rgba(238,246,255,.9);
       font-size:12px;
+      white-space:nowrap;
     }
 
     .toolbar{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
       margin-bottom:10px;
     }
     .toolbar .left{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
@@ -107,14 +111,21 @@
       border-radius:12px;
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.16);
-      font-weight:800;
+      font-weight:900;
     }
     .smallbtn:hover{background: rgba(255,255,255,.12);}
+
     .smallbtn.danger{
       background: rgba(255, 71, 87, .18);
       border: 1px solid rgba(255, 71, 87, .35);
     }
     .smallbtn.danger:hover{ background: rgba(255, 71, 87, .28); }
+
+    .smallbtn.primary{
+      background: rgba(26,107,255,.22);
+      border: 1px solid rgba(26,107,255,.35);
+    }
+    .smallbtn.primary:hover{ background: rgba(26,107,255,.30); }
 
     table{
       width:100%;
@@ -136,8 +147,11 @@
     .muted{color:rgba(238,246,255,.66);}
     .hidden{display:none !important;}
 
-    .checkboxCell{ width:38px; }
-    .rowSelected{ background: rgba(26,107,255,.10) !important; }
+    .cb{
+      width:18px; height:18px;
+      accent-color: var(--accent);
+      cursor:pointer;
+    }
 
     .toast{
       position:fixed; right:14px; bottom:14px;
@@ -149,52 +163,62 @@
       backdrop-filter: blur(10px);
       box-shadow:var(--shadow);
       max-width: 420px;
-      z-index:999;
+      z-index:9999;
     }
 
     /* Modal */
     .overlay{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.48);
+      background: rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
-      padding:16px;
-      z-index: 9999;
-      backdrop-filter: blur(6px);
+      padding:18px;
+      z-index:9998;
+      backdrop-filter: blur(10px);
     }
     .overlay.open{display:flex;}
     .modal{
       width:min(720px, 96vw);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(7,27,58,.94);
-      box-shadow: 0 26px 80px rgba(0,0,0,.40);
-      overflow:hidden;
+      background: rgba(10,35,70,.92);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 16px;
     }
-    .modalHead{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:14px 14px;
-      border-bottom:1px solid rgba(255,255,255,.10);
+    .modalTop{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
     }
-    .modalTitle{font-weight:950; letter-spacing:.2px;}
-    .modalBody{padding:14px;}
-    .modalGrid{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
-    @media (max-width: 720px){ .modalGrid{grid-template-columns:1fr;} }
-    .infoBox{
-      padding:12px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
+    .modalTop strong{font-size:14px;}
+    .xbtn{
+      width:auto;
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      cursor:pointer;
+      font-weight:900;
+    }
+    .codeBox{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
       background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      word-break: break-all;
+      color: rgba(238,246,255,.92);
     }
-    .infoBox .k{font-size:12px; opacity:.75; font-weight:900; letter-spacing:.12em; text-transform:uppercase;}
-    .infoBox .v{margin-top:8px; font-weight:950;}
-    .note{font-size:12px; opacity:.8; line-height:1.5;}
-    .modalActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .hint{
+      font-size:12px;
+      color: rgba(238,246,255,.70);
+      line-height:1.45;
+    }
   </style>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 <header>
   <div class="brand">
@@ -219,6 +243,11 @@
       <input id="password" type="password" placeholder="••••••••" />
       <button id="loginBtn">Se connecter</button>
       <p class="muted" style="margin-top:10px;">Astuce : crée ton utilisateur dans Supabase Auth.</p>
+
+      <div style="margin-top:12px" class="hint">
+        <div class="pill" style="display:inline-flex;margin-bottom:8px;">🔒 Page non indexée (noindex)</div><br/>
+        Si tu ne vois rien après connexion : vérifie `SUPABASE_URL` et `SUPABASE_ANON_KEY` dans `assets/app-config.js`.
+      </div>
     </div>
 
     <!-- DASH -->
@@ -227,24 +256,24 @@
         <div class="left">
           <span class="pill" id="statusPill">🟦 Connecté</span>
           <span class="pill" id="countPill">0 inscrits</span>
-          <span class="pill" id="selectedPill">0 sélection</span>
+          <span class="pill" id="selectedPill">0 sélectionné</span>
         </div>
         <div class="right">
           <input id="dateFilter" type="date" />
-          <input id="searchInput" type="text" placeholder="Recherche nom/email…" />
-          <button class="smallbtn" id="exportPdfBtn" type="button">Exporter PDF</button>
-          <button class="smallbtn" id="paymentsBtn" type="button">Configurer paiements</button>
-          <button class="smallbtn danger" id="deleteSelectedBtn" type="button" disabled>Supprimer sélection</button>
-          <button class="smallbtn danger" id="clearBtn" type="button">🗑 Nettoyer date</button>
-          <button class="smallbtn" id="logoutBtn" type="button">Déconnexion</button>
+          <input id="searchInput" type="text" placeholder="Rechercher (nom, email, ville…)" />
+          <button class="smallbtn" id="exportPdfBtn">Exporter PDF</button>
+          <button class="smallbtn primary" id="paymentsBtn">Configurer paiements</button>
+          <button class="smallbtn danger" id="deleteSelectedBtn" disabled>🗑 Supprimer sélection</button>
+          <button class="smallbtn danger" id="clearBtn">🧹 Vider la date</button>
+          <button class="smallbtn" id="logoutBtn">Déconnexion</button>
         </div>
       </div>
 
       <table>
         <thead>
           <tr>
-            <th class="checkboxCell">
-              <input id="selectAll" type="checkbox" aria-label="Tout sélectionner" />
+            <th style="width:34px;">
+              <input class="cb" id="selectAll" type="checkbox" aria-label="Tout sélectionner" />
             </th>
             <th>Date</th>
             <th>Nom</th>
@@ -254,14 +283,13 @@
             <th>Tél.</th>
             <th>Ville</th>
             <th>Niveau</th>
-            <th class="muted">Créé</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
 
       <p class="muted" style="margin-top:10px;">
-        La table se met à jour en temps réel. Tu peux sélectionner une ou plusieurs lignes puis supprimer.
+        La table se met à jour en temps réel. Astuce : sélectionne des lignes puis <b>Supprimer sélection</b>.
       </p>
     </div>
   </div>
@@ -269,40 +297,31 @@
 
 <div class="toast hidden" id="toast"></div>
 
-<!-- PAIEMENTS MODAL -->
-<div class="overlay" id="paymentsOverlay" role="dialog" aria-modal="true" aria-label="Configuration paiements">
-  <div class="modal">
-    <div class="modalHead">
-      <div class="modalTitle">Configurer les paiements (Stripe)</div>
-      <button class="smallbtn" id="paymentsCloseBtn" type="button">✕</button>
+<!-- Payments modal -->
+<div class="overlay" id="payOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Configuration paiements">
+    <div class="modalTop">
+      <div>
+        <strong>Configuration paiements (Stripe Connect)</strong>
+        <div class="hint" style="margin-top:6px;">
+          Ici tu configures le <b>compte bancaire</b> qui reçoit l’argent.<br/>
+          Tu seras redirigé vers Stripe pour entrer IBAN / identité (onboarding).
+        </div>
+      </div>
+      <button class="xbtn" id="payClose">✕</button>
     </div>
-    <div class="modalBody">
-      <div class="modalGrid">
-        <div class="infoBox">
-          <div class="k">Statut</div>
-          <div class="v" id="paymentsStatus">—</div>
-          <p class="note" style="margin-top:10px;">
-            Cette étape sert à connecter ton compte Stripe (et renseigner ton IBAN) via l’onboarding officiel Stripe.
-          </p>
-        </div>
-        <div class="infoBox">
-          <div class="k">Compte connecté</div>
-          <div class="v" id="paymentsAccountId">—</div>
-          <p class="note" style="margin-top:10px;">
-            Une fois connecté, ton serveur peut envoyer les paiements “Programmes” vers ce compte Stripe.
-          </p>
-        </div>
-      </div>
 
-      <div class="modalActions">
-        <button class="smallbtn" id="startOnboardingBtn" type="button">Ouvrir l’onboarding Stripe</button>
-        <button class="smallbtn" id="refreshPaymentsBtn" type="button">Rafraîchir statut</button>
-      </div>
+    <div class="hint" style="margin:10px 0 8px;">Compte Stripe Connect détecté :</div>
+    <div class="codeBox" id="stripeAccountBox">—</div>
 
-      <p class="note" style="margin-top:12px;">
-        ⚠️ Important : les clés Stripe (secret) ne doivent jamais être saisies ici côté navigateur.
-        Elles se configurent dans les variables d’environnement Vercel.
-      </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <button class="smallbtn primary" id="startOnboardingBtn" style="width:auto;">Ouvrir / Reprendre l’onboarding Stripe</button>
+      <button class="smallbtn" id="copyAccountBtn" style="width:auto;">Copier l’ID</button>
+    </div>
+
+    <div class="hint" style="margin-top:12px;">
+      <b>Important :</b> pour que les paiements de <i>Programmes</i> arrivent sur ce compte,
+      il faut que l’API Stripe Checkout transfère vers ce compte Connect (petite modif côté API).
     </div>
   </div>
 </div>
@@ -314,8 +333,8 @@
   function showToast(msg){
     toastEl.textContent = msg;
     toastEl.classList.remove('hidden');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(()=>toastEl.classList.add('hidden'), 2800);
+    clearTimeout(window.__tto);
+    window.__tto = setTimeout(()=>toastEl.classList.add('hidden'), 2800);
   }
 
   // ---------- Config ----------
@@ -324,7 +343,7 @@
     showToast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
   }
 
-  // ✅ éviter le conflit "supabase already declared"
+  // Avoid conflicts
   const supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
   // ---------- DOM ----------
@@ -338,126 +357,46 @@
 
   const dateFilter = document.getElementById('dateFilter');
   const searchInput = document.getElementById('searchInput');
-  const tbody = document.getElementById('tbody');
 
+  const tbody = document.getElementById('tbody');
   const countPill = document.getElementById('countPill');
   const selectedPill = document.getElementById('selectedPill');
-  const selectAll = document.getElementById('selectAll');
 
   const exportPdfBtn = document.getElementById('exportPdfBtn');
   const paymentsBtn = document.getElementById('paymentsBtn');
-  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
   const clearBtn = document.getElementById('clearBtn');
+  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+  const selectAll = document.getElementById('selectAll');
 
   // Payments modal
-  const paymentsOverlay = document.getElementById('paymentsOverlay');
-  const paymentsCloseBtn = document.getElementById('paymentsCloseBtn');
+  const payOverlay = document.getElementById('payOverlay');
+  const payClose = document.getElementById('payClose');
+  const stripeAccountBox = document.getElementById('stripeAccountBox');
   const startOnboardingBtn = document.getElementById('startOnboardingBtn');
-  const refreshPaymentsBtn = document.getElementById('refreshPaymentsBtn');
-  const paymentsStatus = document.getElementById('paymentsStatus');
-  const paymentsAccountId = document.getElementById('paymentsAccountId');
+  const copyAccountBtn = document.getElementById('copyAccountBtn');
 
-  // Default date
+  // ---------- State ----------
   dateFilter.value = '2026-02-22';
-
-  // Realtime
   let channel = null;
-
-  // Selection
+  let currentRows = []; // last fetched
   const selectedIds = new Set();
-  let lastRows = []; // cache rows for re-render / filtering
 
-  function setSelectedUI(){
-    const n = selectedIds.size;
-    selectedPill.textContent = `${n} sélection`;
-    deleteSelectedBtn.disabled = n === 0;
-    // Update select-all checkbox (tri-state simple)
-    const visibleIds = lastRows.map(r => r.id);
-    const selectedVisible = visibleIds.filter(id => selectedIds.has(id)).length;
-    selectAll.checked = visibleIds.length > 0 && selectedVisible === visibleIds.length;
-    selectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+  function updateSelectedUI(){
+    selectedPill.textContent = `${selectedIds.size} sélectionné`;
+    deleteSelectedBtn.disabled = selectedIds.size === 0;
+    selectAll.checked = currentRows.length > 0 && selectedIds.size === currentRows.length;
   }
 
-  function safeUpper(s){ return String(s||'').toUpperCase(); }
-  function safeStr(s){ return String(s||''); }
-  function fmtCreated(iso){
-    if(!iso) return '';
-    const d = new Date(iso);
-    return d.toLocaleString('fr-FR', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-  }
+  function safeStr(x){ return (x == null) ? '' : String(x); }
 
-  function applyFilter(rows){
-    const q = (searchInput.value || '').trim().toLowerCase();
-    if(!q) return rows;
-    return rows.filter(r => {
-      const hay = [
-        r.first_name, r.last_name, r.email, r.phone, r.city, r.level
-      ].join(' ').toLowerCase();
-      return hay.includes(q);
-    });
-  }
-
-  function renderTable(rows){
-    const filtered = applyFilter(rows);
-    countPill.textContent = `${filtered.length} inscrit(s)`;
-
-    tbody.innerHTML = filtered.map(r => {
-      const checked = selectedIds.has(r.id) ? 'checked' : '';
-      const rowCls = selectedIds.has(r.id) ? 'rowSelected' : '';
-      return `
-        <tr class="${rowCls}" data-id="${r.id}">
-          <td class="checkboxCell">
-            <input class="rowChk" type="checkbox" data-id="${r.id}" ${checked} aria-label="Sélectionner la ligne" />
-          </td>
-          <td class="muted">${safeStr(r.detection_date)}</td>
-          <td>${safeUpper(r.last_name)}</td>
-          <td>${safeStr(r.first_name)}</td>
-          <td class="muted">${safeStr(r.birth_year)}</td>
-          <td class="muted">${safeStr(r.email)}</td>
-          <td class="muted">${safeStr(r.phone)}</td>
-          <td class="muted">${safeStr(r.city)}</td>
-          <td class="muted">${safeStr(r.level)}</td>
-          <td class="muted">${fmtCreated(r.created_at)}</td>
-        </tr>
-      `;
-    }).join('');
-
-    // Checkbox events
-    tbody.querySelectorAll('.rowChk').forEach(chk => {
-      chk.addEventListener('change', () => {
-        const id = chk.dataset.id;
-        if(chk.checked) selectedIds.add(id);
-        else selectedIds.delete(id);
-        // toggle row class
-        const tr = chk.closest('tr');
-        if(tr) tr.classList.toggle('rowSelected', chk.checked);
-        setSelectedUI();
-      });
-    });
-
-    // Row click toggles selection (except clicking checkbox)
-    tbody.querySelectorAll('tr[data-id]').forEach(tr => {
-      tr.addEventListener('click', (e) => {
-        if(e.target && e.target.classList && e.target.classList.contains('rowChk')) return;
-        const id = tr.dataset.id;
-        const now = !selectedIds.has(id);
-        if(now) selectedIds.add(id); else selectedIds.delete(id);
-        const chk = tr.querySelector('.rowChk');
-        if(chk) chk.checked = now;
-        tr.classList.toggle('rowSelected', now);
-        setSelectedUI();
-      });
-    });
-
-    setSelectedUI();
-  }
-
+  // ---------- Data fetch ----------
   async function refresh(){
     const date = dateFilter.value;
+    const q = (searchInput.value || '').trim().toLowerCase();
 
     const { data, error } = await supabaseClient
       .from('detection_registrations')
-      .select('id,detection_date,first_name,last_name,birth_year,email,phone,city,level,created_at')
+      .select('*')
       .eq('detection_date', date)
       .order('created_at', { ascending: false });
 
@@ -466,12 +405,66 @@
       return;
     }
 
-    // keep selectedIds only if still exists
-    const ids = new Set((data||[]).map(r => String(r.id)));
-    Array.from(selectedIds).forEach(id => { if(!ids.has(id)) selectedIds.delete(id); });
+    const rows = (data || []);
+    currentRows = q
+      ? rows.filter(r => {
+          const hay = [
+            safeStr(r.last_name),
+            safeStr(r.first_name),
+            safeStr(r.email),
+            safeStr(r.city),
+            safeStr(r.phone),
+            safeStr(r.level),
+          ].join(' ').toLowerCase();
+          return hay.includes(q);
+        })
+      : rows;
 
-    lastRows = (data || []).map(r => ({ ...r, id: String(r.id) }));
-    renderTable(lastRows);
+    // purge selection if row not visible anymore
+    const visibleIds = new Set(currentRows.map(r => r.id));
+    for (const id of Array.from(selectedIds)) {
+      if (!visibleIds.has(id)) selectedIds.delete(id);
+    }
+
+    countPill.textContent = `${currentRows.length} inscrit(s)`;
+
+    tbody.innerHTML = currentRows.map(r => {
+      const checked = selectedIds.has(r.id) ? 'checked' : '';
+      return `
+        <tr data-id="${r.id}">
+          <td><input class="cb rowcb" type="checkbox" ${checked} aria-label="Sélectionner"/></td>
+          <td class="muted">${safeStr(r.detection_date)}</td>
+          <td>${safeStr(r.last_name).toUpperCase()}</td>
+          <td>${safeStr(r.first_name)}</td>
+          <td class="muted">${safeStr(r.birth_year)}</td>
+          <td class="muted">${safeStr(r.email)}</td>
+          <td class="muted">${safeStr(r.phone)}</td>
+          <td class="muted">${safeStr(r.city)}</td>
+          <td class="muted">${safeStr(r.level)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    // bind checkbox events
+    tbody.querySelectorAll('tr').forEach(tr => {
+      const id = tr.getAttribute('data-id');
+      const cb = tr.querySelector('.rowcb');
+      cb.addEventListener('change', () => {
+        if(cb.checked) selectedIds.add(id);
+        else selectedIds.delete(id);
+        updateSelectedUI();
+      });
+
+      // click row toggles (except clicking checkbox directly)
+      tr.addEventListener('click', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('rowcb')) return;
+        if (e.target && e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change'));
+      });
+    });
+
+    updateSelectedUI();
   }
 
   function subscribeRealtime(){
@@ -492,12 +485,13 @@
     dashCard.classList.remove('hidden');
     await refresh();
     subscribeRealtime();
-    handlePaymentsQuery();
   }
 
   async function showAuth(){
     authCard.classList.remove('hidden');
     dashCard.classList.add('hidden');
+    selectedIds.clear();
+    updateSelectedUI();
     if(channel){
       supabaseClient.removeChannel(channel);
       channel = null;
@@ -514,7 +508,6 @@
       showToast("Connexion refusée: " + error.message);
       return;
     }
-
     showToast("Connecté ✅");
     showDash();
   });
@@ -522,30 +515,26 @@
   logoutBtn.addEventListener('click', async () => {
     await supabaseClient.auth.signOut();
     showToast("Déconnecté");
-    selectedIds.clear();
     showAuth();
   });
 
   // ---------- Filters ----------
-  dateFilter.addEventListener('change', async ()=>{
+  dateFilter.addEventListener('change', async () => {
     selectedIds.clear();
-    selectAll.checked = false;
+    updateSelectedUI();
     await refresh();
   });
+  searchInput.addEventListener('input', () => refresh());
 
-  searchInput.addEventListener('input', ()=>{
-    renderTable(lastRows);
-  });
-
-  // Select all visible
-  selectAll.addEventListener('change', ()=>{
-    const visible = applyFilter(lastRows);
+  selectAll.addEventListener('change', () => {
     if(selectAll.checked){
-      visible.forEach(r => selectedIds.add(String(r.id)));
+      currentRows.forEach(r => selectedIds.add(String(r.id)));
     } else {
-      visible.forEach(r => selectedIds.delete(String(r.id)));
+      selectedIds.clear();
     }
-    renderTable(lastRows);
+    // update checkboxes UI
+    tbody.querySelectorAll('.rowcb').forEach(cb => cb.checked = selectAll.checked);
+    updateSelectedUI();
   });
 
   // ---------- Export PDF ----------
@@ -554,54 +543,78 @@
     window.open(`/api/export-pdf?date=${encodeURIComponent(date)}`, '_blank');
   });
 
-  // ---------- Delete selected (client-side delete with RLS) ----------
-  deleteSelectedBtn.addEventListener('click', async () => {
-    const ids = Array.from(selectedIds);
-    if(!ids.length) return;
+  // ---------- Payments (Stripe Connect) ----------
+  function openPaymentsModal(){
+    payOverlay.classList.add('open');
+    payOverlay.setAttribute('aria-hidden','false');
+  }
+  function closePaymentsModal(){
+    payOverlay.classList.remove('open');
+    payOverlay.setAttribute('aria-hidden','true');
+  }
+  payClose.addEventListener('click', closePaymentsModal);
+  payOverlay.addEventListener('click', (e) => { if(e.target === payOverlay) closePaymentsModal(); });
 
-    const ok = confirm(`Supprimer ${ids.length} inscription(s) sélectionnée(s) ?`);
-    if(!ok) return;
-
-    const sure = prompt(`Tape SUPPRIMER pour confirmer la suppression (${ids.length})`);
-    if(sure !== 'SUPPRIMER') {
-      showToast('Suppression annulée');
-      return;
-    }
-
-    showToast('Suppression en cours…');
-
-    const { data: sess } = await supabaseClient.auth.getSession();
-    if(!sess?.session){
-      showToast('Session expirée, reconnecte-toi.');
-      showAuth();
-      return;
-    }
-
-    const { error } = await supabaseClient
-      .from('detection_registrations')
-      .delete()
-      .in('id', ids);
+  async function loadStripeAccountId(){
+    // read from DB app_settings (created/updated by your stripe-connect-onboarding API)
+    const { data, error } = await supabaseClient
+      .from('app_settings')
+      .select('value')
+      .eq('key','stripe_account_id')
+      .maybeSingle();
 
     if(error){
-      showToast("Erreur suppression: " + error.message);
+      stripeAccountBox.textContent = '— (table app_settings introuvable ou RLS bloque la lecture)';
       return;
     }
+    stripeAccountBox.textContent = (data && data.value) ? data.value : '— (pas encore configuré)';
+  }
 
-    selectedIds.clear();
-    showToast(`✅ Supprimé: ${ids.length}`);
-    refresh();
+  paymentsBtn.addEventListener('click', async () => {
+    await loadStripeAccountId();
+    openPaymentsModal();
   });
 
-  // ---------- Clear by date (server API) ----------
-  clearBtn.addEventListener('click', async () => {
+  startOnboardingBtn.addEventListener('click', async () => {
+    showToast("Ouverture Stripe…");
+    const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
+    const json = await resp.json().catch(()=>({}));
+
+    if(!resp.ok){
+      showToast("Erreur paiements: " + (json.error||resp.status));
+      return;
+    }
+    // json.url + json.accountId
+    if(json.accountId) stripeAccountBox.textContent = json.accountId;
+    window.location.href = json.url;
+  });
+
+  copyAccountBtn.addEventListener('click', async () => {
+    const v = stripeAccountBox.textContent.trim();
+    if(!v || v === '—' || v.includes('pas encore')) { showToast("Rien à copier"); return; }
+    try{
+      await navigator.clipboard.writeText(v);
+      showToast("ID Stripe copié ✅");
+    }catch{
+      showToast("Copie impossible (navigateur).");
+    }
+  });
+
+  // ---------- Delete selected ----------
+  async function getAccessToken(){
+    const { data } = await supabaseClient.auth.getSession();
+    return data?.session?.access_token || null;
+  }
+
+  deleteSelectedBtn.addEventListener('click', async () => {
+    if(selectedIds.size === 0) return;
+
     const date = dateFilter.value;
+    const list = Array.from(selectedIds);
+    const ok = confirm(`Supprimer ${list.length} inscription(s) sélectionnée(s) du ${date} ?`);
+    if(!ok) return;
 
-    const mode = confirm(
-      `OK = supprimer TOUTES les inscriptions du ${date}\nAnnuler = ne rien faire`
-    );
-    if (!mode) return;
-
-    const sure = prompt(`Tape SUPPRIMER pour confirmer la suppression du ${date}`);
+    const sure = prompt(`Tape SUPPRIMER pour confirmer (${list.length} sélection)`);
     if (sure !== 'SUPPRIMER') {
       showToast('Suppression annulée');
       return;
@@ -609,9 +622,80 @@
 
     showToast('Suppression en cours…');
 
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data?.session;
-    if (!session) {
+    const token = await getAccessToken();
+    if(!token){
+      showToast('Session expirée, reconnecte-toi.');
+      showAuth();
+      return;
+    }
+
+    // Option A: via API (recommandé) — si tu as /api/admin-delete-registrations
+    // Option B: fallback delete direct via Supabase (si tes RLS l'autorisent)
+    let apiWorked = false;
+
+    try{
+      const resp = await fetch('/api/admin-delete-registrations', {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ids: list })
+      });
+
+      const json = await resp.json().catch(()=>({}));
+      if(resp.ok){
+        apiWorked = true;
+        showToast(`✅ Supprimé: ${json.deleted || list.length}`);
+      } else {
+        // keep going fallback
+        console.warn("API delete failed:", json);
+      }
+    }catch(e){
+      console.warn("API delete error:", e);
+    }
+
+    if(!apiWorked){
+      const { error } = await supabaseClient
+        .from('detection_registrations')
+        .delete()
+        .in('id', list);
+
+      if(error){
+        showToast("❌ Suppression bloquée (RLS/API).");
+        alert(
+          "Suppression impossible.\n\n" +
+          "➡️ Solution recommandée : créer l'endpoint /api/admin-delete-registrations (service role) " +
+          "ou autoriser delete via RLS pour les admins.\n\n" +
+          "Erreur: " + error.message
+        );
+        return;
+      }
+      showToast(`✅ Supprimé: ${list.length}`);
+    }
+
+    selectedIds.clear();
+    updateSelectedUI();
+    refresh();
+  });
+
+  // ---------- Clear date ----------
+  clearBtn.addEventListener('click', async () => {
+    const date = dateFilter.value;
+
+    const mode = confirm(`Vider TOUTES les inscriptions du ${date} ?`);
+    if (!mode) return;
+
+    const sure = prompt(`Tape SUPPRIMER pour confirmer la suppression totale du ${date}`);
+    if (sure !== 'SUPPRIMER') {
+      showToast('Suppression annulée');
+      return;
+    }
+
+    showToast('Suppression en cours…');
+
+    const token = await getAccessToken();
+    if(!token){
       showToast('Session expirée, reconnecte-toi.');
       showAuth();
       return;
@@ -621,7 +705,7 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ scope: 'date', date })
     });
@@ -632,82 +716,18 @@
       return;
     }
 
-    selectedIds.clear();
     showToast(`✅ Supprimé: ${json.deleted} inscription(s)`);
+    selectedIds.clear();
+    updateSelectedUI();
     refresh();
-  });
-
-  // ---------- Payments modal ----------
-  function openPayments(){
-    paymentsOverlay.classList.add('open');
-  }
-  function closePayments(){
-    paymentsOverlay.classList.remove('open');
-  }
-  paymentsCloseBtn.addEventListener('click', closePayments);
-  paymentsOverlay.addEventListener('click', (e)=>{ if(e.target === paymentsOverlay) closePayments(); });
-
-  function setPaymentsUI({ status, accountId }){
-    paymentsStatus.textContent = status || '—';
-    paymentsAccountId.textContent = accountId || '—';
-  }
-
-  function handlePaymentsQuery(){
-    const params = new URLSearchParams(window.location.search);
-    const p = params.get('payments');
-    if(p === 'ok'){
-      setPaymentsUI({ status: '✅ Onboarding terminé (ou revenu sur le site)', accountId: paymentsAccountId.textContent });
-      openPayments();
-    } else if(p === 'retry'){
-      setPaymentsUI({ status: '↩️ Onboarding à relancer (refresh)', accountId: paymentsAccountId.textContent });
-      openPayments();
-    }
-  }
-
-  async function startOnboarding(){
-    startOnboardingBtn.disabled = true;
-    startOnboardingBtn.textContent = "Ouverture…";
-    try{
-      const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
-      const json = await resp.json().catch(()=>({}));
-      if(!resp.ok){
-        setPaymentsUI({ status: '❌ Erreur: ' + (json.error || resp.status), accountId: '—' });
-        showToast('Erreur paiements');
-        return;
-      }
-      setPaymentsUI({ status: '➡️ Onboarding ouvert', accountId: json.accountId || '—' });
-      // Redirection vers Stripe
-      window.location.href = json.url;
-    } finally {
-      startOnboardingBtn.disabled = false;
-      startOnboardingBtn.textContent = "Ouvrir l’onboarding Stripe";
-    }
-  }
-
-  paymentsBtn.addEventListener('click', ()=>{
-    setPaymentsUI({ status: 'Prêt. Clique sur “Ouvrir l’onboarding Stripe”.', accountId: paymentsAccountId.textContent });
-    openPayments();
-  });
-  startOnboardingBtn.addEventListener('click', startOnboarding);
-
-  refreshPaymentsBtn.addEventListener('click', async ()=>{
-    // Simple: on relance l’endpoint pour récupérer accountId + repartir en onboarding si besoin
-    showToast("Rafraîchissement…");
-    try{
-      const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
-      const json = await resp.json().catch(()=>({}));
-      if(!resp.ok){
-        setPaymentsUI({ status: '❌ Erreur: ' + (json.error || resp.status), accountId: '—' });
-        return;
-      }
-      setPaymentsUI({ status: '✅ Compte trouvé (onboarding accessible)', accountId: json.accountId || '—' });
-    } catch(e){
-      setPaymentsUI({ status: '❌ Erreur réseau', accountId: '—' });
-    }
   });
 
   // ---------- On load ----------
   (async () => {
+    const params = new URLSearchParams(location.search);
+    if(params.get('payments') === 'ok') showToast("Paiements configurés ✅");
+    if(params.get('payments') === 'retry') showToast("Reprends la configuration Stripe…");
+
     const { data } = await supabaseClient.auth.getSession();
     if(data && data.session){
       showDash();
@@ -716,5 +736,6 @@
 </script>
 </body>
 </html>
+
 
 
