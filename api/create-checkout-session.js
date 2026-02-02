@@ -1,58 +1,114 @@
-const Stripe = require('stripe');
+// api/create-checkout-session.js
+const Stripe = require("stripe");
+const { getSupabaseServiceClient } = require("./_supabase");
 
-function getSiteUrl(req){
-  return process.env.SITE_URL || `https://${req.headers.host}`;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+function getOrigin(req) {
+  const origin = req.headers.origin;
+  if (origin) return origin;
+
+  const referer = req.headers.referer || "";
+  try {
+    const u = new URL(referer);
+    return `${u.protocol}//${u.host}`;
+  } catch {
+    return "https://flyfuturechampions.com";
+  }
+}
+
+async function getStripeConnectedAccountId() {
+  const supabase = getSupabaseServiceClient();
+
+  const { data, error } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "stripe_account_id")
+    .single();
+
+  if (error || !data?.value) {
+    throw new Error(
+      "Stripe Connect non configuré : clé 'stripe_account_id' introuvable dans app_settings."
+    );
+  }
+
+  return data.value; // ex: acct_123...
+}
+
+function sanitizeItems(items) {
+  if (!Array.isArray(items) || items.length === 0) return [];
+
+  return items
+    .map((it) => {
+      const name = String(it?.name || "").trim();
+      const unit_amount = Number(it?.unit_amount);
+      const quantity = Number(it?.quantity);
+
+      if (!name) return null;
+      if (!Number.isFinite(unit_amount) || unit_amount <= 0) return null;
+      if (!Number.isFinite(quantity) || quantity <= 0) return null;
+
+      // Stripe demande des entiers (centimes)
+      const ua = Math.round(unit_amount);
+      const q = Math.round(quantity);
+
+      return { name, unit_amount: ua, quantity: q };
+    })
+    .filter(Boolean)
+    .slice(0, 30);
 }
 
 module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
-
   try {
-    const stripeKey = process.env.STRIPE_SECRET_KEY;
-    if(!stripeKey) throw new Error("Missing STRIPE_SECRET_KEY");
-    const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' });
-
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const items = Array.isArray(body.items) ? body.items : [];
-
-    if (!items.length) {
-      res.status(400).json({ error: 'Empty cart' });
-      return;
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    // Map items to line items
-    const line_items = items.map(it => {
-      const name = String(it.name || 'Programme');
-      const unit_amount = Number(it.unit_amount); // cents
-      const quantity = Math.max(1, Number(it.quantity || 1));
+    const items = sanitizeItems(req.body?.items);
+    if (!items.length) {
+      return res.status(400).json({ error: "Panier vide ou invalide." });
+    }
 
-      if (!unit_amount || unit_amount < 50) throw new Error("Invalid unit_amount");
-      return {
-        quantity,
-        price_data: {
-          currency: 'eur',
-          unit_amount,
-          product_data: { name }
-        }
-      };
-    });
+    const connectedAccountId = await getStripeConnectedAccountId();
+    const origin = getOrigin(req);
 
-    const siteUrl = getSiteUrl(req);
-
+    // ✅ Destination charge -> transfert vers ton compte Connect (0% commission plateforme)
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'], // Apple Pay will appear automatically when available
-      line_items,
-      success_url: `${siteUrl}/programmes.html?paid=1`,
-      cancel_url: `${siteUrl}/programmes.html?canceled=1`,
-      automatic_tax: { enabled: false }
+      mode: "payment",
+      payment_method_types: ["card"],
+      line_items: items.map((it) => ({
+        price_data: {
+          currency: "eur",
+          product_data: { name: it.name },
+          unit_amount: it.unit_amount, // en centimes
+        },
+        quantity: it.quantity,
+      })),
+
+      // Pages retour (adapte si tu as une page success dédiée)
+      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/programmes.html#pricing`,
+
+      // ✅ Le point clé :
+      payment_intent_data: {
+        transfer_data: { destination: connectedAccountId },
+        on_behalf_of: connectedAccountId,
+
+        // (optionnel) pour suivi côté Stripe
+        metadata: {
+          app: "flyfuturechampions",
+          source: "programmes",
+        },
+      },
+
+      metadata: {
+        app: "flyfuturechampions",
+      },
     });
 
-    res.status(200).json({ url: session.url });
-  } catch (e) {
-    res.status(500).json({ error: e.message || String(e) });
+    return res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error("create-checkout-session error:", err);
+    return res.status(500).json({ error: err.message || "Server error" });
   }
 };
