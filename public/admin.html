@@ -15,6 +15,7 @@
       --glass:rgba(255,255,255,.08);
       --line:rgba(255,255,255,.14);
       --accent:#1a6bff;
+      --danger:#ff4757;
       --shadow:0 18px 60px rgba(0,0,0,.30);
       --r:18px;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -40,7 +41,8 @@
     header img{height:54px; width:auto;}
     header a{color:var(--ink); text-decoration:none; opacity:.9}
     header a:hover{opacity:1}
-    .wrap{max-width:1180px; margin:0 auto; padding:22px 20px 44px;}
+
+    .wrap{max-width:1200px; margin:0 auto; padding:22px 20px 44px;}
     .grid{display:grid; grid-template-columns: 360px 1fr; gap:18px; align-items:start;}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
 
@@ -54,6 +56,7 @@
     h1{font-size:20px; margin:0 0 10px;}
     h2{font-size:14px; margin:0 0 10px; color:rgba(238,246,255,.92);}
     p, label{color:var(--muted); margin:0 0 10px; font-size:13px; line-height:1.45;}
+
     input{
       width:100%;
       padding:12px 12px;
@@ -73,15 +76,13 @@
       padding:12px 14px;
       background: rgba(26,107,255,.32);
       color:var(--ink);
-      font-weight:700;
+      font-weight:800;
       cursor:pointer;
       border:1px solid rgba(255,255,255,.18);
       transition: transform .14s ease, background .14s ease;
     }
     button:hover{transform: translateY(-1px); background: rgba(26,107,255,.42);}
-
-    .row{display:flex; gap:10px; align-items:center;}
-    .row > *{flex:1}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
 
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -90,7 +91,6 @@
       background: rgba(255,255,255,.08);
       color:rgba(238,246,255,.9);
       font-size:12px;
-      white-space:nowrap;
     }
 
     .toolbar{
@@ -99,8 +99,7 @@
     }
     .toolbar .left{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
     .toolbar .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-
-    .toolbar input{margin:0; max-width:190px;}
+    .toolbar input{margin:0; max-width:220px;}
 
     .smallbtn{
       width:auto;
@@ -109,23 +108,13 @@
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.16);
       font-weight:800;
-      letter-spacing:.2px;
     }
     .smallbtn:hover{background: rgba(255,255,255,.12);}
-
     .smallbtn.danger{
       background: rgba(255, 71, 87, .18);
       border: 1px solid rgba(255, 71, 87, .35);
     }
-    .smallbtn.danger:hover{
-      background: rgba(255, 71, 87, .28);
-    }
-
-    .smallbtn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-      transform:none;
-    }
+    .smallbtn.danger:hover{ background: rgba(255, 71, 87, .28); }
 
     table{
       width:100%;
@@ -143,17 +132,12 @@
       color:rgba(238,246,255,.92);
       vertical-align:top;
     }
-    tbody tr:hover{background: rgba(255,255,255,.05); cursor:pointer;}
-
-    th.chk, td.chk{width:34px; padding-left:12px; padding-right:6px;}
-    input[type="checkbox"]{
-      width:16px; height:16px; margin:0;
-      accent-color: var(--accent);
-      cursor:pointer;
-    }
-
+    tbody tr:hover{background: rgba(255,255,255,.05);}
     .muted{color:rgba(238,246,255,.66);}
     .hidden{display:none !important;}
+
+    .checkboxCell{ width:38px; }
+    .rowSelected{ background: rgba(26,107,255,.10) !important; }
 
     .toast{
       position:fixed; right:14px; bottom:14px;
@@ -165,8 +149,47 @@
       backdrop-filter: blur(10px);
       box-shadow:var(--shadow);
       max-width: 420px;
-      z-index:9999;
+      z-index:999;
     }
+
+    /* Modal */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.48);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index: 9999;
+      backdrop-filter: blur(6px);
+    }
+    .overlay.open{display:flex;}
+    .modal{
+      width:min(720px, 96vw);
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(7,27,58,.94);
+      box-shadow: 0 26px 80px rgba(0,0,0,.40);
+      overflow:hidden;
+    }
+    .modalHead{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .modalTitle{font-weight:950; letter-spacing:.2px;}
+    .modalBody{padding:14px;}
+    .modalGrid{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 720px){ .modalGrid{grid-template-columns:1fr;} }
+    .infoBox{
+      padding:12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+    .infoBox .k{font-size:12px; opacity:.75; font-weight:900; letter-spacing:.12em; text-transform:uppercase;}
+    .infoBox .v{margin-top:8px; font-weight:950;}
+    .note{font-size:12px; opacity:.8; line-height:1.5;}
+    .modalActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -204,22 +227,25 @@
         <div class="left">
           <span class="pill" id="statusPill">🟦 Connecté</span>
           <span class="pill" id="countPill">0 inscrits</span>
-          <span class="pill" id="stripePill">💳 Stripe : —</span>
+          <span class="pill" id="selectedPill">0 sélection</span>
         </div>
         <div class="right">
           <input id="dateFilter" type="date" />
-          <button class="smallbtn" id="exportPdfBtn">Exporter PDF</button>
-          <button class="smallbtn" id="paymentsBtn">Configurer paiements</button>
-          <button class="smallbtn danger" id="deleteSelectedBtn" disabled>🗑 Supprimer sélection</button>
-          <button class="smallbtn danger" id="clearBtn">🧹 Nettoyer date</button>
-          <button class="smallbtn" id="logoutBtn">Déconnexion</button>
+          <input id="searchInput" type="text" placeholder="Recherche nom/email…" />
+          <button class="smallbtn" id="exportPdfBtn" type="button">Exporter PDF</button>
+          <button class="smallbtn" id="paymentsBtn" type="button">Configurer paiements</button>
+          <button class="smallbtn danger" id="deleteSelectedBtn" type="button" disabled>Supprimer sélection</button>
+          <button class="smallbtn danger" id="clearBtn" type="button">🗑 Nettoyer date</button>
+          <button class="smallbtn" id="logoutBtn" type="button">Déconnexion</button>
         </div>
       </div>
 
       <table>
         <thead>
           <tr>
-            <th class="chk"><input type="checkbox" id="selectAll" aria-label="Tout sélectionner"></th>
+            <th class="checkboxCell">
+              <input id="selectAll" type="checkbox" aria-label="Tout sélectionner" />
+            </th>
             <th>Date</th>
             <th>Nom</th>
             <th>Prénom</th>
@@ -228,38 +254,80 @@
             <th>Tél.</th>
             <th>Ville</th>
             <th>Niveau</th>
+            <th class="muted">Créé</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
 
-      <p class="muted" style="margin-top:10px;">✅ La table se met à jour en temps réel. Clique sur une ligne pour la sélectionner.</p>
+      <p class="muted" style="margin-top:10px;">
+        La table se met à jour en temps réel. Tu peux sélectionner une ou plusieurs lignes puis supprimer.
+      </p>
     </div>
   </div>
 </div>
 
 <div class="toast hidden" id="toast"></div>
 
+<!-- PAIEMENTS MODAL -->
+<div class="overlay" id="paymentsOverlay" role="dialog" aria-modal="true" aria-label="Configuration paiements">
+  <div class="modal">
+    <div class="modalHead">
+      <div class="modalTitle">Configurer les paiements (Stripe)</div>
+      <button class="smallbtn" id="paymentsCloseBtn" type="button">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="modalGrid">
+        <div class="infoBox">
+          <div class="k">Statut</div>
+          <div class="v" id="paymentsStatus">—</div>
+          <p class="note" style="margin-top:10px;">
+            Cette étape sert à connecter ton compte Stripe (et renseigner ton IBAN) via l’onboarding officiel Stripe.
+          </p>
+        </div>
+        <div class="infoBox">
+          <div class="k">Compte connecté</div>
+          <div class="v" id="paymentsAccountId">—</div>
+          <p class="note" style="margin-top:10px;">
+            Une fois connecté, ton serveur peut envoyer les paiements “Programmes” vers ce compte Stripe.
+          </p>
+        </div>
+      </div>
+
+      <div class="modalActions">
+        <button class="smallbtn" id="startOnboardingBtn" type="button">Ouvrir l’onboarding Stripe</button>
+        <button class="smallbtn" id="refreshPaymentsBtn" type="button">Rafraîchir statut</button>
+      </div>
+
+      <p class="note" style="margin-top:12px;">
+        ⚠️ Important : les clés Stripe (secret) ne doivent jamais être saisies ici côté navigateur.
+        Elles se configurent dans les variables d’environnement Vercel.
+      </p>
+    </div>
+  </div>
+</div>
+
 <script src="assets/app-config.js"></script>
 <script>
-  // ---------------- Toast ----------------
+  // ---------- Toast ----------
   const toastEl = document.getElementById('toast');
   function showToast(msg){
     toastEl.textContent = msg;
     toastEl.classList.remove('hidden');
-    setTimeout(()=>toastEl.classList.add('hidden'), 2800);
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>toastEl.classList.add('hidden'), 2800);
   }
 
-  // ---------------- Config + Supabase ----------------
+  // ---------- Config ----------
   const cfg = window.APP_CONFIG || {};
   if(!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY){
     showToast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
   }
 
-  // Avoid naming conflict
+  // ✅ éviter le conflit "supabase already declared"
   const supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
-  // ---------------- DOM ----------------
+  // ---------- DOM ----------
   const authCard = document.getElementById('authCard');
   const dashCard = document.getElementById('dashCard');
 
@@ -267,80 +335,129 @@
   const passEl = document.getElementById('password');
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+
   const dateFilter = document.getElementById('dateFilter');
+  const searchInput = document.getElementById('searchInput');
   const tbody = document.getElementById('tbody');
+
   const countPill = document.getElementById('countPill');
-  const stripePill = document.getElementById('stripePill');
+  const selectedPill = document.getElementById('selectedPill');
+  const selectAll = document.getElementById('selectAll');
 
   const exportPdfBtn = document.getElementById('exportPdfBtn');
   const paymentsBtn = document.getElementById('paymentsBtn');
+  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
   const clearBtn = document.getElementById('clearBtn');
 
-  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-  const selectAll = document.getElementById('selectAll');
+  // Payments modal
+  const paymentsOverlay = document.getElementById('paymentsOverlay');
+  const paymentsCloseBtn = document.getElementById('paymentsCloseBtn');
+  const startOnboardingBtn = document.getElementById('startOnboardingBtn');
+  const refreshPaymentsBtn = document.getElementById('refreshPaymentsBtn');
+  const paymentsStatus = document.getElementById('paymentsStatus');
+  const paymentsAccountId = document.getElementById('paymentsAccountId');
 
   // Default date
   dateFilter.value = '2026-02-22';
 
-  // Realtime channel
+  // Realtime
   let channel = null;
 
   // Selection
-  let selectedIds = new Set();
+  const selectedIds = new Set();
+  let lastRows = []; // cache rows for re-render / filtering
 
-  function updateDeleteBtn(){
+  function setSelectedUI(){
     const n = selectedIds.size;
+    selectedPill.textContent = `${n} sélection`;
     deleteSelectedBtn.disabled = n === 0;
-    deleteSelectedBtn.textContent = n ? `🗑 Supprimer sélection (${n})` : '🗑 Supprimer sélection';
+    // Update select-all checkbox (tri-state simple)
+    const visibleIds = lastRows.map(r => r.id);
+    const selectedVisible = visibleIds.filter(id => selectedIds.has(id)).length;
+    selectAll.checked = visibleIds.length > 0 && selectedVisible === visibleIds.length;
+    selectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
   }
 
-  function wireSelectionHandlers(){
-    const checks = Array.from(document.querySelectorAll('.rowCheck'));
+  function safeUpper(s){ return String(s||'').toUpperCase(); }
+  function safeStr(s){ return String(s||''); }
+  function fmtCreated(iso){
+    if(!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleString('fr-FR', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+  }
 
-    checks.forEach(chk => {
+  function applyFilter(rows){
+    const q = (searchInput.value || '').trim().toLowerCase();
+    if(!q) return rows;
+    return rows.filter(r => {
+      const hay = [
+        r.first_name, r.last_name, r.email, r.phone, r.city, r.level
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function renderTable(rows){
+    const filtered = applyFilter(rows);
+    countPill.textContent = `${filtered.length} inscrit(s)`;
+
+    tbody.innerHTML = filtered.map(r => {
+      const checked = selectedIds.has(r.id) ? 'checked' : '';
+      const rowCls = selectedIds.has(r.id) ? 'rowSelected' : '';
+      return `
+        <tr class="${rowCls}" data-id="${r.id}">
+          <td class="checkboxCell">
+            <input class="rowChk" type="checkbox" data-id="${r.id}" ${checked} aria-label="Sélectionner la ligne" />
+          </td>
+          <td class="muted">${safeStr(r.detection_date)}</td>
+          <td>${safeUpper(r.last_name)}</td>
+          <td>${safeStr(r.first_name)}</td>
+          <td class="muted">${safeStr(r.birth_year)}</td>
+          <td class="muted">${safeStr(r.email)}</td>
+          <td class="muted">${safeStr(r.phone)}</td>
+          <td class="muted">${safeStr(r.city)}</td>
+          <td class="muted">${safeStr(r.level)}</td>
+          <td class="muted">${fmtCreated(r.created_at)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    // Checkbox events
+    tbody.querySelectorAll('.rowChk').forEach(chk => {
       chk.addEventListener('change', () => {
         const id = chk.dataset.id;
-        if (chk.checked) selectedIds.add(id);
+        if(chk.checked) selectedIds.add(id);
         else selectedIds.delete(id);
-
-        if (selectAll){
-          selectAll.checked = checks.length > 0 && checks.every(c => c.checked);
-        }
-        updateDeleteBtn();
+        // toggle row class
+        const tr = chk.closest('tr');
+        if(tr) tr.classList.toggle('rowSelected', chk.checked);
+        setSelectedUI();
       });
     });
 
-    Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
+    // Row click toggles selection (except clicking checkbox)
+    tbody.querySelectorAll('tr[data-id]').forEach(tr => {
       tr.addEventListener('click', (e) => {
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.closest('input'))) return;
-        const chk = tr.querySelector('.rowCheck');
-        if (!chk) return;
-        chk.checked = !chk.checked;
-        chk.dispatchEvent(new Event('change'));
+        if(e.target && e.target.classList && e.target.classList.contains('rowChk')) return;
+        const id = tr.dataset.id;
+        const now = !selectedIds.has(id);
+        if(now) selectedIds.add(id); else selectedIds.delete(id);
+        const chk = tr.querySelector('.rowChk');
+        if(chk) chk.checked = now;
+        tr.classList.toggle('rowSelected', now);
+        setSelectedUI();
       });
     });
 
-    if (selectAll){
-      selectAll.onchange = () => {
-        const on = selectAll.checked;
-        checks.forEach(c => {
-          c.checked = on;
-          const id = c.dataset.id;
-          if (on) selectedIds.add(id);
-          else selectedIds.delete(id);
-        });
-        updateDeleteBtn();
-      };
-    }
+    setSelectedUI();
   }
 
-  // ---------------- Data refresh ----------------
   async function refresh(){
     const date = dateFilter.value;
 
     const { data, error } = await supabaseClient
       .from('detection_registrations')
-      .select('id, created_at, detection_date, last_name, first_name, birth_year, email, phone, city, level')
+      .select('id,detection_date,first_name,last_name,birth_year,email,phone,city,level,created_at')
       .eq('detection_date', date)
       .order('created_at', { ascending: false });
 
@@ -349,28 +466,12 @@
       return;
     }
 
-    selectedIds.clear();
-    if (selectAll) selectAll.checked = false;
+    // keep selectedIds only if still exists
+    const ids = new Set((data||[]).map(r => String(r.id)));
+    Array.from(selectedIds).forEach(id => { if(!ids.has(id)) selectedIds.delete(id); });
 
-    const rows = data || [];
-    countPill.textContent = `${rows.length} inscrit(s)`;
-
-    tbody.innerHTML = rows.map(r => `
-      <tr data-id="${r.id}">
-        <td class="chk"><input class="rowCheck" type="checkbox" data-id="${r.id}" aria-label="Sélectionner la ligne"></td>
-        <td class="muted">${r.detection_date || ''}</td>
-        <td>${(r.last_name||'').toUpperCase()}</td>
-        <td>${r.first_name||''}</td>
-        <td class="muted">${r.birth_year||''}</td>
-        <td class="muted">${r.email||''}</td>
-        <td class="muted">${r.phone||''}</td>
-        <td class="muted">${r.city||''}</td>
-        <td class="muted">${r.level||''}</td>
-      </tr>
-    `).join('');
-
-    wireSelectionHandlers();
-    updateDeleteBtn();
+    lastRows = (data || []).map(r => ({ ...r, id: String(r.id) }));
+    renderTable(lastRows);
   }
 
   function subscribeRealtime(){
@@ -378,7 +479,6 @@
       supabaseClient.removeChannel(channel);
       channel = null;
     }
-
     channel = supabaseClient
       .channel('registrations-realtime')
       .on('postgres_changes', { event:'*', schema:'public', table:'detection_registrations' }, () => {
@@ -387,27 +487,12 @@
       .subscribe();
   }
 
-  async function loadStripeStatus(){
-    try{
-      const resp = await fetch('/api/payment-settings');
-      const json = await resp.json().catch(()=>({}));
-      const acct = json?.stripe_connect_account_id;
-      if (acct && String(acct).startsWith('acct_')){
-        stripePill.textContent = '💳 Stripe : connecté ✅';
-      } else {
-        stripePill.textContent = '💳 Stripe : non configuré';
-      }
-    } catch(e){
-      stripePill.textContent = '💳 Stripe : —';
-    }
-  }
-
   async function showDash(){
     authCard.classList.add('hidden');
     dashCard.classList.remove('hidden');
     await refresh();
     subscribeRealtime();
-    loadStripeStatus();
+    handlePaymentsQuery();
   }
 
   async function showAuth(){
@@ -419,7 +504,7 @@
     }
   }
 
-  // ---------------- Auth handlers ----------------
+  // ---------- Auth ----------
   loginBtn.addEventListener('click', async () => {
     const email = emailEl.value.trim();
     const password = passEl.value;
@@ -437,108 +522,82 @@
   logoutBtn.addEventListener('click', async () => {
     await supabaseClient.auth.signOut();
     showToast("Déconnecté");
+    selectedIds.clear();
     showAuth();
   });
 
-  dateFilter.addEventListener('change', refresh);
+  // ---------- Filters ----------
+  dateFilter.addEventListener('change', async ()=>{
+    selectedIds.clear();
+    selectAll.checked = false;
+    await refresh();
+  });
 
-  // ---------------- PDF export ----------------
+  searchInput.addEventListener('input', ()=>{
+    renderTable(lastRows);
+  });
+
+  // Select all visible
+  selectAll.addEventListener('change', ()=>{
+    const visible = applyFilter(lastRows);
+    if(selectAll.checked){
+      visible.forEach(r => selectedIds.add(String(r.id)));
+    } else {
+      visible.forEach(r => selectedIds.delete(String(r.id)));
+    }
+    renderTable(lastRows);
+  });
+
+  // ---------- Export PDF ----------
   exportPdfBtn.addEventListener('click', () => {
     const date = dateFilter.value;
     window.open(`/api/export-pdf?date=${encodeURIComponent(date)}`, '_blank');
   });
 
-  // ---------------- Stripe Connect onboarding ----------------
-  paymentsBtn.addEventListener('click', async () => {
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data?.session;
-    if(!session){
-      showToast('Session expirée, reconnecte-toi.');
-      showAuth();
-      return;
-    }
-
-    showToast("Ouverture Stripe…");
-    const resp = await fetch('/api/stripe-connect-onboarding', {
-      method:'POST',
-      headers: { 'Authorization': `Bearer ${session.access_token}` }
-    });
-
-    const json = await resp.json().catch(()=> ({}));
-    if(!resp.ok){
-      showToast("Erreur paiements: " + (json.error||resp.status));
-      return;
-    }
-
-    // BONUS: si l'API renvoie account_id, on l'enregistre
-    if(json.account_id){
-      await fetch('/api/admin-save-payment-settings', {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ stripe_connect_account_id: json.account_id })
-      }).catch(()=>{});
-    }
-
-    // Redirect Stripe
-    if(json.url){
-      window.location.href = json.url;
-    } else {
-      showToast("Erreur: URL Stripe manquante");
-    }
-  });
-
-  // ---------------- Delete selected ----------------
+  // ---------- Delete selected (client-side delete with RLS) ----------
   deleteSelectedBtn.addEventListener('click', async () => {
-    const n = selectedIds.size;
-    if (!n) return;
+    const ids = Array.from(selectedIds);
+    if(!ids.length) return;
 
-    const ok = confirm(`Supprimer définitivement ${n} inscription(s) sélectionnée(s) ?`);
-    if (!ok) return;
+    const ok = confirm(`Supprimer ${ids.length} inscription(s) sélectionnée(s) ?`);
+    if(!ok) return;
 
-    const sure = prompt(`Tape SUPPRIMER pour confirmer`);
-    if (sure !== 'SUPPRIMER'){
+    const sure = prompt(`Tape SUPPRIMER pour confirmer la suppression (${ids.length})`);
+    if(sure !== 'SUPPRIMER') {
       showToast('Suppression annulée');
-      return;
-    }
-
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data?.session;
-    if(!session){
-      showToast('Session expirée, reconnecte-toi.');
-      showAuth();
       return;
     }
 
     showToast('Suppression en cours…');
 
-    const resp = await fetch('/api/admin-delete-registrations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({ ids: Array.from(selectedIds) })
-    });
-
-    const json = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      showToast('Erreur suppression: ' + (json.error || resp.status));
+    const { data: sess } = await supabaseClient.auth.getSession();
+    if(!sess?.session){
+      showToast('Session expirée, reconnecte-toi.');
+      showAuth();
       return;
     }
 
-    showToast(`✅ Supprimé: ${json.deleted} inscription(s)`);
+    const { error } = await supabaseClient
+      .from('detection_registrations')
+      .delete()
+      .in('id', ids);
+
+    if(error){
+      showToast("Erreur suppression: " + error.message);
+      return;
+    }
+
+    selectedIds.clear();
+    showToast(`✅ Supprimé: ${ids.length}`);
     refresh();
   });
 
-  // ---------------- Clear by date (existing behavior) ----------------
+  // ---------- Clear by date (server API) ----------
   clearBtn.addEventListener('click', async () => {
     const date = dateFilter.value;
 
     const mode = confirm(
-      `OK = supprimer les inscriptions du ${date}\nAnnuler = ne rien faire`
+      `OK = supprimer TOUTES les inscriptions du ${date}\nAnnuler = ne rien faire`
     );
     if (!mode) return;
 
@@ -573,11 +632,81 @@
       return;
     }
 
+    selectedIds.clear();
     showToast(`✅ Supprimé: ${json.deleted} inscription(s)`);
     refresh();
   });
 
-  // ---------------- On load: auto session ----------------
+  // ---------- Payments modal ----------
+  function openPayments(){
+    paymentsOverlay.classList.add('open');
+  }
+  function closePayments(){
+    paymentsOverlay.classList.remove('open');
+  }
+  paymentsCloseBtn.addEventListener('click', closePayments);
+  paymentsOverlay.addEventListener('click', (e)=>{ if(e.target === paymentsOverlay) closePayments(); });
+
+  function setPaymentsUI({ status, accountId }){
+    paymentsStatus.textContent = status || '—';
+    paymentsAccountId.textContent = accountId || '—';
+  }
+
+  function handlePaymentsQuery(){
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('payments');
+    if(p === 'ok'){
+      setPaymentsUI({ status: '✅ Onboarding terminé (ou revenu sur le site)', accountId: paymentsAccountId.textContent });
+      openPayments();
+    } else if(p === 'retry'){
+      setPaymentsUI({ status: '↩️ Onboarding à relancer (refresh)', accountId: paymentsAccountId.textContent });
+      openPayments();
+    }
+  }
+
+  async function startOnboarding(){
+    startOnboardingBtn.disabled = true;
+    startOnboardingBtn.textContent = "Ouverture…";
+    try{
+      const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
+      const json = await resp.json().catch(()=>({}));
+      if(!resp.ok){
+        setPaymentsUI({ status: '❌ Erreur: ' + (json.error || resp.status), accountId: '—' });
+        showToast('Erreur paiements');
+        return;
+      }
+      setPaymentsUI({ status: '➡️ Onboarding ouvert', accountId: json.accountId || '—' });
+      // Redirection vers Stripe
+      window.location.href = json.url;
+    } finally {
+      startOnboardingBtn.disabled = false;
+      startOnboardingBtn.textContent = "Ouvrir l’onboarding Stripe";
+    }
+  }
+
+  paymentsBtn.addEventListener('click', ()=>{
+    setPaymentsUI({ status: 'Prêt. Clique sur “Ouvrir l’onboarding Stripe”.', accountId: paymentsAccountId.textContent });
+    openPayments();
+  });
+  startOnboardingBtn.addEventListener('click', startOnboarding);
+
+  refreshPaymentsBtn.addEventListener('click', async ()=>{
+    // Simple: on relance l’endpoint pour récupérer accountId + repartir en onboarding si besoin
+    showToast("Rafraîchissement…");
+    try{
+      const resp = await fetch('/api/stripe-connect-onboarding', { method:'POST' });
+      const json = await resp.json().catch(()=>({}));
+      if(!resp.ok){
+        setPaymentsUI({ status: '❌ Erreur: ' + (json.error || resp.status), accountId: '—' });
+        return;
+      }
+      setPaymentsUI({ status: '✅ Compte trouvé (onboarding accessible)', accountId: json.accountId || '—' });
+    } catch(e){
+      setPaymentsUI({ status: '❌ Erreur réseau', accountId: '—' });
+    }
+  });
+
+  // ---------- On load ----------
   (async () => {
     const { data } = await supabaseClient.auth.getSession();
     if(data && data.session){
@@ -587,3 +716,5 @@
 </script>
 </body>
 </html>
+
+
