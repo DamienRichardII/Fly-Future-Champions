@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0B2F55" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Paiement confirmé — Fly Future Champions</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg1:#061b3a;
+      --bg2:#0b2e5f;
+      --ink:#eef6ff;
+      --muted:rgba(238,246,255,.72);
+      --glass:rgba(255,255,255,.10);
+      --line:rgba(255,255,255,.16);
+      --accent:#1a6bff;
+      --good:#2ee59d;
+      --bad:#ff4757;
+      --shadow:0 22px 70px rgba(0,0,0,.35);
+      --r:22px;
+      --r2:16px;
+      font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 650px at 12% 10%, rgba(26,107,255,.30) 0%, rgba(26,107,255,0) 60%),
+        radial-gradient(900px 520px at 88% 18%, rgba(16,74,155,.22) 0%, rgba(16,74,155,0) 58%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 45%, #0a2a55 100%);
+      overflow-x:hidden;
+    }
+
+    .court-bg{
+      position:fixed; inset:-10%;
+      pointer-events:none;
+      z-index:-2;
+      opacity:.18;
+      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201000%20500%27%3E%3Cdefs%3E%3Cstyle%3E.l%7Bfill%3Anone%3Bstroke%3A%23ffffff%3Bstroke-width%3A4%3Bstroke-opacity%3A.35%3Bvector-effect%3Anon-scaling-stroke%3B%7D%3C/style%3E%3C/defs%3E%3Crect%20class%3D%27l%27%20x%3D%2720%27%20y%3D%2720%27%20width%3D%27960%27%20height%3D%27460%27%20rx%3D%2718%27/%3E%3Cline%20class%3D%27l%27%20x1%3D%27500%27%20y1%3D%2720%27%20x2%3D%27500%27%20y2%3D%27480%27/%3E%3Ccircle%20class%3D%27l%27%20cx%3D%27500%27%20cy%3D%27250%27%20r%3D%2760%27/%3E%3Crect%20class%3D%27l%27%20x%3D%2720%27%20y%3D%27170%27%20width%3D%27190%27%20height%3D%27160%27/%3E%3Crect%20class%3D%27l%27%20x%3D%27790%27%20y%3D%27170%27%20width%3D%27190%27%20height%3D%27160%27/%3E%3C/svg%3E");
+      background-repeat:repeat;
+      background-size: 980px 490px;
+      filter: saturate(1.08) contrast(1.02);
+      mask-image: radial-gradient(closest-side at 50% 45%, rgba(0,0,0,.88), rgba(0,0,0,.12));
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(6,27,58,.85), rgba(6,27,58,.20));
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .nav{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{display:flex; align-items:center; gap:12px;}
+    .brand img{
+      width:46px; height:46px; object-fit:contain;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,.25));
+    }
+    .brand .t1{font-weight:900; letter-spacing:.4px}
+    .brand .t2{font-size:12px; color:var(--muted); margin-top:2px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color:rgba(238,246,255,.92);
+      font-weight:800;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .pill:hover{background: rgba(255,255,255,.12);}
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding: 26px 18px 70px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border-radius: var(--r);
+      border:1px solid var(--line);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardInner{padding:18px;}
+
+    .hero{position:relative; overflow:hidden;}
+    .hero::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(620px 300px at 20% 18%, rgba(26,107,255,.28), rgba(26,107,255,0) 55%),
+        radial-gradient(520px 280px at 90% 22%, rgba(46,229,157,.18), rgba(46,229,157,0) 55%);
+      opacity:.95;
+      pointer-events:none;
+    }
+
+    .badgeOk{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(46,229,157,.14);
+      border: 1px solid rgba(46,229,157,.25);
+      color: rgba(238,246,255,.95);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .check{
+      width:22px; height:22px;
+      border-radius:999px;
+      background: rgba(46,229,157,.22);
+      border: 1px solid rgba(46,229,157,.32);
+      display:grid; place-items:center;
+      font-weight:1000;
+    }
+
+    h1{
+      margin:14px 0 10px;
+      font-size: clamp(28px, 3.2vw, 44px);
+      letter-spacing:-.02em;
+      line-height:1.05;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      font-weight:600;
+      line-height:1.55;
+      max-width: 65ch;
+    }
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(26,107,255,.32);
+      color:var(--ink);
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      transition: transform .14s ease, background .14s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(26,107,255,.42);}
+    .btn.ghost{background: rgba(255,255,255,.08);}
+    .btn.ghost:hover{background: rgba(255,255,255,.12);}
+
+    .list{
+      margin:0; padding:0; list-style:none;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .row{
+      padding:12px;
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .k{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: rgba(238,246,255,.70);
+    }
+    .v{
+      margin-top:6px;
+      font-weight:800;
+      color: rgba(238,246,255,.94);
+      line-height:1.35;
+      word-break: break-word;
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      opacity: .95;
+    }
+
+    .items{
+      margin-top:10px;
+      border-top:1px solid rgba(255,255,255,.12);
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+    .item .name{font-weight:900;}
+    .item .meta{color:var(--muted); font-weight:600; font-size:13px; margin-top:2px;}
+    .price{font-weight:900; white-space:nowrap;}
+
+    .total{
+      margin-top:12px;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(46,229,157,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-weight:900;
+    }
+
+    .subtle{
+      color: rgba(238,246,255,.70);
+      font-size:12px;
+      font-weight:600;
+      margin-top:10px;
+      line-height:1.45;
+    }
+
+    .skeleton{
+      height:12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+      position:relative;
+    }
+    .skeleton::after{
+      content:"";
+      position:absolute; inset:0;
+      transform: translateX(-60%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+    @keyframes shimmer{
+      0%{transform: translateX(-60%);}
+      100%{transform: translateX(160%);}
+    }
+
+    .dangerBox{
+      background: rgba(255,71,87,.12);
+      border-color: rgba(255,71,87,.22);
+    }
+  </style>
+</head>
+<body>
+  <div class="court-bg" aria-hidden="true"></div>
+
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <img src="assets/logo_header.png" alt="Fly Future Champions" />
+        <div>
+          <div class="t1">FLY FUTURE CHAMPIONS</div>
+          <div class="t2">Paiement • Confirmation</div>
+        </div>
+      </div>
+      <a class="pill" href="index.html">↩ Retour au site</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card hero">
+        <div class="cardInner">
+          <div class="badgeOk">
+            <span class="check">✓</span>
+            Paiement confirmé
+          </div>
+
+          <h1>Merci — ton inscription est bien prise en compte.</h1>
+          <p class="lead">
+            Tu vas recevoir une confirmation (email) si ton adresse a été renseignée pendant le paiement.
+            En attendant, voici ton récapitulatif officiel.
+          </p>
+
+          <div class="actions">
+            <a class="btn" href="programmes.html#pricing">Voir les programmes</a>
+            <a class="btn ghost" href="detections.html">Aller aux détections</a>
+          </div>
+
+          <p class="subtle">
+            Conseil : fais une capture d’écran de cette page ou télécharge ton récap quand tout s’affiche.
+          </p>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardInner">
+          <h2 style="margin:0 0 10px;">Récapitulatif</h2>
+
+          <div id="loading">
+            <div class="row">
+              <div style="flex:1">
+                <div class="k">Chargement</div>
+                <div class="v">
+                  <div class="skeleton" style="width:82%;"></div>
+                  <div style="height:8px;"></div>
+                  <div class="skeleton" style="width:64%;"></div>
+                </div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="row">
+              <div style="flex:1">
+                <div class="k">Détails</div>
+                <div class="v">
+                  <div class="skeleton" style="width:92%;"></div>
+                  <div style="height:8px;"></div>
+                  <div class="skeleton" style="width:55%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="content" style="display:none;">
+            <ul class="list">
+              <li class="row">
+                <div style="min-width:140px">
+                  <div class="k">Statut</div>
+                  <div class="v" id="status">—</div>
+                </div>
+                <div style="min-width:160px; text-align:right">
+                  <div class="k">Référence</div>
+                  <div class="v mono" id="ref">—</div>
+                  <div class="subtle" style="margin:6px 0 0; text-align:right; opacity:.85;">
+                    ID court : <span class="mono" id="refShort">—</span>
+                  </div>
+                </div>
+              </li>
+
+              <li class="row">
+                <div>
+                  <div class="k">Client</div>
+                  <div class="v" id="customer">—</div>
+                </div>
+              </li>
+
+              <li class="row">
+                <div>
+                  <div class="k">Date</div>
+                  <div class="v" id="date">—</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="items" id="items"></div>
+
+            <div class="total">
+              <span>Total payé</span>
+              <span id="total">—</span>
+            </div>
+
+            <div class="actions" style="margin-top:12px;">
+              <button class="btn ghost" id="downloadBtn" type="button">Télécharger le récap</button>
+            </div>
+
+            <p class="subtle" id="note">
+              Si le récap ne s’affiche pas, vérifie que l’URL contient bien <strong>session_id</strong>.
+            </p>
+          </div>
+
+          <div id="error" style="display:none;">
+            <div class="row dangerBox">
+              <div style="flex:1">
+                <div class="k">Impossible de charger</div>
+                <div class="v" id="errorMsg">—</div>
+              </div>
+            </div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="btn" href="programmes.html#pricing">Retour programmes</a>
+              <button class="btn ghost" id="retryBtn" type="button">Réessayer</button>
+            </div>
+            <p class="subtle">Si le paiement a bien été effectué mais que cette page ne charge pas, contacte le staff.</p>
+          </div>
+
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const fmtMoney = (amountCents, currency="eur") => {
+      const value = (Number(amountCents || 0) / 100);
+      return value.toLocaleString("fr-FR", { style:"currency", currency: String(currency || "eur").toUpperCase() });
+    };
+
+    const qs = new URLSearchParams(location.search);
+    const sessionId = (qs.get("session_id") || "").trim();
+
+    const elLoading = document.getElementById("loading");
+    const elContent = document.getElementById("content");
+    const elError = document.getElementById("error");
+    const elErrorMsg = document.getElementById("errorMsg");
+
+    const setVisible = (which) => {
+      elLoading.style.display = (which === "loading") ? "" : "none";
+      elContent.style.display = (which === "content") ? "" : "none";
+      elError.style.display = (which === "error") ? "" : "none";
+    };
+
+    function safeText(x){ return String(x || "—"); }
+
+    function buildRecapText(data){
+      const dt = data.created ? new Date(data.created * 1000) : null;
+      const dateTxt = dt ? dt.toLocaleString("fr-FR") : "-";
+
+      const customerLines = [
+        data.customer?.name ? `Nom : ${data.customer.name}` : null,
+        data.customer?.email ? `Email : ${data.customer.email}` : null,
+        data.customer?.phone ? `Téléphone : ${data.customer.phone}` : null,
+      ].filter(Boolean);
+
+      const items = (data.items && data.items.length) ? data.items : [];
+
+      const lines = [
+        "FLY FUTURE CHAMPIONS — PAIEMENT CONFIRMÉ",
+        "--------------------------------------",
+        "",
+        `Référence : ${data.id || "-"}`,
+        `Statut : ${data.payment_status || data.status || "-"}`,
+        `Date : ${dateTxt}`,
+        "",
+        "Client :",
+        ...(customerLines.length ? customerLines : ["—"]),
+        "",
+        "Articles :",
+        ...(items.length
+          ? items.map(it => `- ${it.description} (x${it.quantity || 1}) — ${fmtMoney(it.amount_total, it.currency)}`)
+          : ["—"]),
+        "",
+        `Total : ${fmtMoney(data.amount_total, data.currency)}`
+      ];
+      return lines.join("\n");
+    }
+
+    async function load(){
+      // Validation légère
+      if(!sessionId){
+        setVisible("error");
+        elErrorMsg.textContent = "session_id manquant dans l'URL.";
+        return;
+      }
+      if(!sessionId.startsWith("cs_")){
+        setVisible("error");
+        elErrorMsg.textContent = "session_id invalide (doit commencer par cs_).";
+        return;
+      }
+
+      try{
+        setVisible("loading");
+        const resp = await fetch(`/api/get-checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+        const json = await resp.json().catch(()=> ({}));
+        if(!resp.ok){
+          throw new Error(json.error || resp.status);
+        }
+
+        // Statut
+        const ok = (json.payment_status === "paid" || json.status === "complete");
+        document.getElementById("status").textContent = ok ? "Payé ✅" : safeText(json.payment_status || json.status);
+
+        // Réf
+        document.getElementById("ref").textContent = safeText(json.id);
+        const short = (json.id && json.id.length > 10) ? (json.id.slice(0, 6) + "…" + json.id.slice(-4)) : safeText(json.id);
+        document.getElementById("refShort").textContent = short;
+
+        // Client
+        const parts = [];
+        if(json.customer?.name) parts.push(json.customer.name);
+        if(json.customer?.email) parts.push(json.customer.email);
+        if(json.customer?.phone) parts.push(json.customer.phone);
+        document.getElementById("customer").textContent = parts.length ? parts.join(" • ") : "—";
+
+        // Date
+        const dt = json.created ? new Date(json.created * 1000) : null;
+        document.getElementById("date").textContent = dt ? dt.toLocaleString("fr-FR") : "—";
+
+        // Items
+        const itemsWrap = document.getElementById("items");
+        itemsWrap.innerHTML = "";
+
+        const items = (json.items && json.items.length) ? json.items : [];
+        if(!items.length){
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            <div>
+              <div class="name">Articles</div>
+              <div class="meta">Aucun détail disponible</div>
+            </div>
+            <div class="price">—</div>
+          `;
+          itemsWrap.appendChild(div);
+        } else {
+          items.forEach(it => {
+            const div = document.createElement("div");
+            div.className = "item";
+            div.innerHTML = `
+              <div>
+                <div class="name">${safeText(it.description || "Article")}</div>
+                <div class="meta">Quantité : ${Number(it.quantity || 1)}</div>
+              </div>
+              <div class="price">${fmtMoney(it.amount_total, it.currency)}</div>
+            `;
+            itemsWrap.appendChild(div);
+          });
+        }
+
+        document.getElementById("total").textContent = fmtMoney(json.amount_total, json.currency);
+
+        // Download recap
+        const recapText = buildRecapText(json);
+        document.getElementById("downloadBtn").onclick = () => {
+          const blob = new Blob([recapText], { type: "text/plain;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "recu-fly-future-champions.txt";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(()=> URL.revokeObjectURL(url), 500);
+        };
+
+        setVisible("content");
+      }catch(err){
+        setVisible("error");
+        elErrorMsg.textContent = "Erreur : " + (err.message || err);
+      }
+    }
+
+    document.getElementById("retryBtn")?.addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>
