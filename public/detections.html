@@ -1312,25 +1312,30 @@
       }
 
       // --- Send to backend (Supabase via Vercel API) ---
-      const payload = {
-        detection_date: data.eventDate,
-        first_name: data.firstName,
-        last_name: data.lastName,
-        birth_year: data.birth ? parseInt(String(data.birth).slice(0,4), 10) : null,
-        gender: data.gender,
-        email: data.email,
-        phone: data.phone,
-        city: data.city,
-        level: data.level,
-        position: data.position,
-        height_cm: data.height ? parseInt(String(data.height), 10) : null,
-        // On conserve club + objectif + message (et autres) dans notes
-        notes: [
-          `Club: ${data.club}`,
-          `Objectif: ${data.goal}`,
-          `Message: ${data.message}`
-        ].join(" — "),
-      };
+const payload = {
+  detection_date: data.eventDate,
+  first_name: data.firstName,
+  last_name: data.lastName,
+  birth_year: data.birth ? parseInt(String(data.birth).slice(0,4), 10) : null,
+
+  // Colonnes existantes (si présentes dans ta table)
+  gender: data.gender,
+  email: data.email,
+  phone: data.phone,
+  city: data.city,
+  level: data.level,
+  position: data.position,
+  height_cm: data.height ? parseInt(String(data.height), 10) : null,
+
+  // ✅ Notes “riches” lisibles (admin + PDF)
+  // Supporte parsing (Club/Objectif/Message/Naissance)
+  notes: [
+    `Naissance: ${data.birth || ''}`,
+    `Club: ${data.club || ''}`,
+    `Objectif: ${data.goal || ''}`,
+    `Message: ${data.message || ''}`
+  ].join("\n"),
+};
 
       const btn = $('#submitBtn');
       const old = btn.textContent;

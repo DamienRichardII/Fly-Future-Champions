@@ -83,9 +83,6 @@
     }
     button:hover{transform: translateY(-1px); background: rgba(26,107,255,.42);}
 
-    .row{display:flex; gap:10px; align-items:center;}
-    .row > *{flex:1}
-
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:7px 10px; border-radius:999px;
@@ -112,6 +109,9 @@
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.16);
       font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
     }
     .smallbtn:hover{background: rgba(255,255,255,.12);}
 
@@ -126,6 +126,12 @@
       border: 1px solid rgba(26,107,255,.35);
     }
     .smallbtn.primary:hover{ background: rgba(26,107,255,.30); }
+
+    .smallbtn.ok{
+      background: rgba(46, 213, 115, .16);
+      border: 1px solid rgba(46, 213, 115, .30);
+    }
+    .smallbtn.ok:hover{ background: rgba(46, 213, 115, .22); }
 
     table{
       width:100%;
@@ -153,6 +159,17 @@
       cursor:pointer;
     }
 
+    .miniAction{
+      width:auto;
+      padding:8px 10px;
+      border-radius:12px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .miniAction:hover{background: rgba(255,255,255,.12);}
+
     .toast{
       position:fixed; right:14px; bottom:14px;
       background: rgba(0,0,0,.55);
@@ -162,7 +179,7 @@
       border-radius:14px;
       backdrop-filter: blur(10px);
       box-shadow:var(--shadow);
-      max-width: 420px;
+      max-width: 520px;
       z-index:9999;
     }
 
@@ -179,7 +196,7 @@
     }
     .overlay.open{display:flex;}
     .modal{
-      width:min(720px, 96vw);
+      width:min(760px, 96vw);
       background: rgba(10,35,70,.92);
       border:1px solid rgba(255,255,255,.16);
       border-radius: 18px;
@@ -201,6 +218,7 @@
       cursor:pointer;
       font-weight:900;
     }
+
     .codeBox{
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:12px;
@@ -208,13 +226,41 @@
       border:1px solid rgba(255,255,255,.12);
       border-radius: 14px;
       padding: 10px 12px;
-      word-break: break-all;
+      word-break: break-word;
+      white-space: pre-wrap;
       color: rgba(238,246,255,.92);
+      max-height: 280px;
+      overflow:auto;
     }
     .hint{
       font-size:12px;
       color: rgba(238,246,255,.70);
       line-height:1.45;
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:10px 12px;
+      align-items:start;
+      margin-top:10px;
+    }
+    @media (max-width: 680px){
+      .kv{grid-template-columns:1fr}
+    }
+    .k{
+      font-size:12px;
+      color: rgba(238,246,255,.65);
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .v{
+      font-size:13px;
+      color: rgba(238,246,255,.92);
+      line-height:1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -225,7 +271,7 @@
     <img src="assets/logo_transparent.png" alt="Fly Future Champions"/>
     <div>
       <div style="font-weight:900; letter-spacing:.2px;">ADMIN</div>
-      <div class="muted" style="font-size:12px;">Inscriptions • PDF • Paiements</div>
+      <div class="muted" style="font-size:12px;">Inscriptions • PDF • Emails • Paiements</div>
     </div>
   </div>
   <a href="index.html" class="pill">↩ Retour site</a>
@@ -261,7 +307,14 @@
         <div class="right">
           <input id="dateFilter" type="date" />
           <input id="searchInput" type="text" placeholder="Rechercher (nom, email, ville…)" />
+
           <button class="smallbtn" id="exportPdfBtn">Exporter PDF</button>
+
+          <!-- ✅ EMAILS -->
+          <button class="smallbtn ok" id="emailsBtn" title="Voir / copier / email groupé">
+            ✉️ Emails
+          </button>
+
           <button class="smallbtn primary" id="paymentsBtn">Configurer paiements</button>
           <button class="smallbtn danger" id="deleteSelectedBtn" disabled>🗑 Supprimer sélection</button>
           <button class="smallbtn danger" id="clearBtn">🧹 Vider la date</button>
@@ -283,13 +336,15 @@
             <th>Tél.</th>
             <th>Ville</th>
             <th>Niveau</th>
+            <th style="width:110px;">Actions</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
 
       <p class="muted" style="margin-top:10px;">
-        La table se met à jour en temps réel. Astuce : sélectionne des lignes puis <b>Supprimer sélection</b>.
+        Astuce : sélectionne des lignes puis clique sur <b>✉️ Emails</b> pour copier la liste ou envoyer un mail groupé (BCC).
+        Clique sur <b>Voir</b> pour afficher toutes les informations d’un joueur.
       </p>
     </div>
   </div>
@@ -326,6 +381,56 @@
   </div>
 </div>
 
+<!-- ✅ Emails modal -->
+<div class="overlay" id="emailsOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Emails groupés">
+    <div class="modalTop">
+      <div>
+        <strong>Emails (sélection / date)</strong>
+        <div class="hint" style="margin-top:6px;">
+          • Si tu as une sélection, on prend <b>uniquement la sélection</b>.<br/>
+          • Sinon, on prend <b>tous les inscrits visibles</b> (filtre date + recherche).
+        </div>
+      </div>
+      <button class="xbtn" id="emailsClose">✕</button>
+    </div>
+
+    <div class="hint" style="margin:10px 0 8px;">Liste d’emails (1 par ligne) :</div>
+    <div class="codeBox" id="emailsBox">—</div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+      <button class="smallbtn" id="copyEmailsBtn" style="width:auto;">Copier la liste</button>
+      <button class="smallbtn ok" id="mailtoBtn" style="width:auto;">Ouvrir mail (BCC)</button>
+      <button class="smallbtn" id="downloadEmailsBtn" style="width:auto;">Télécharger .txt</button>
+    </div>
+
+    <div class="hint" style="margin-top:12px;">
+      Note : l’envoi “mail groupé” utilise ton client mail (Gmail/Outlook) via <b>BCC</b>.
+      Pour envoyer des emails automatiquement depuis le site, il faut brancher un endpoint (SendGrid/Mailgun/Resend).
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Details modal -->
+<div class="overlay" id="detailsOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Détails inscription">
+    <div class="modalTop">
+      <div>
+        <strong id="detailsTitle">Détails</strong>
+        <div class="hint" id="detailsSubtitle" style="margin-top:6px;">—</div>
+      </div>
+      <button class="xbtn" id="detailsClose">✕</button>
+    </div>
+
+    <div class="kv" id="detailsKv"></div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+      <button class="smallbtn" id="copyDetailsBtn" style="width:auto;">Copier</button>
+      <button class="smallbtn ok" id="emailOneBtn" style="width:auto;">Email joueur</button>
+    </div>
+  </div>
+</div>
+
 <script src="assets/app-config.js"></script>
 <script>
   // ---------- Toast ----------
@@ -343,7 +448,6 @@
     showToast("⚠️ Configure SUPABASE_URL et SUPABASE_ANON_KEY dans assets/app-config.js");
   }
 
-  // Avoid conflicts
   const supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
   // ---------- DOM ----------
@@ -368,6 +472,24 @@
   const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
   const selectAll = document.getElementById('selectAll');
 
+  // Emails modal
+  const emailsBtn = document.getElementById('emailsBtn');
+  const emailsOverlay = document.getElementById('emailsOverlay');
+  const emailsClose = document.getElementById('emailsClose');
+  const emailsBox = document.getElementById('emailsBox');
+  const copyEmailsBtn = document.getElementById('copyEmailsBtn');
+  const mailtoBtn = document.getElementById('mailtoBtn');
+  const downloadEmailsBtn = document.getElementById('downloadEmailsBtn');
+
+  // Details modal
+  const detailsOverlay = document.getElementById('detailsOverlay');
+  const detailsClose = document.getElementById('detailsClose');
+  const detailsTitle = document.getElementById('detailsTitle');
+  const detailsSubtitle = document.getElementById('detailsSubtitle');
+  const detailsKv = document.getElementById('detailsKv');
+  const copyDetailsBtn = document.getElementById('copyDetailsBtn');
+  const emailOneBtn = document.getElementById('emailOneBtn');
+
   // Payments modal
   const payOverlay = document.getElementById('payOverlay');
   const payClose = document.getElementById('payClose');
@@ -376,10 +498,13 @@
   const copyAccountBtn = document.getElementById('copyAccountBtn');
 
   // ---------- State ----------
+  // (tu peux aussi mettre "aujourd'hui" si tu veux, mais je laisse ton preset)
   dateFilter.value = '2026-02-22';
+
   let channel = null;
-  let currentRows = []; // last fetched
+  let currentRows = [];
   const selectedIds = new Set();
+  let lastOpenedDetails = null;
 
   function updateSelectedUI(){
     selectedPill.textContent = `${selectedIds.size} sélectionné`;
@@ -388,6 +513,70 @@
   }
 
   function safeStr(x){ return (x == null) ? '' : String(x); }
+
+  function isEmail(s){
+    const v = String(s||'').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  function parseNotes(notesRaw){
+    const raw = safeStr(notesRaw);
+    const out = { club:'', objectif:'', message:'', naissance:'' };
+
+    if(!raw) return out;
+
+    // Supporte:
+    // - "Club: X — Objectif: Y — Message: Z"
+    // - "Club: X\nObjectif: Y\nMessage: Z\nNaissance: YYYY-MM-DD"
+    const parts = raw.includes('\n') ? raw.split('\n') : raw.split('—').map(s=>s.trim());
+
+    for (const p of parts){
+      const line = String(p||'').trim();
+      if(!line) continue;
+
+      const m = line.match(/^([^:]+)\s*:\s*(.*)$/);
+      if(!m) continue;
+
+      const k = m[1].trim().toLowerCase();
+      const v = m[2].trim();
+
+      if(k.startsWith('club')) out.club = v;
+      else if(k.startsWith('objectif') || k.startsWith('goal')) out.objectif = v;
+      else if(k.startsWith('message') || k.startsWith('notes')) out.message = v;
+      else if(k.startsWith('naissance') || k.startsWith('birth')) out.naissance = v;
+    }
+
+    return out;
+  }
+
+  function rowsBySelectionOrVisible(){
+    if (selectedIds.size > 0){
+      const sel = new Set(Array.from(selectedIds).map(String));
+      return currentRows.filter(r => sel.has(String(r.id)));
+    }
+    return currentRows;
+  }
+
+  function buildEmailList(rows){
+    const emails = [];
+    const seen = new Set();
+    for (const r of rows){
+      const e = safeStr(r.email).trim().toLowerCase();
+      if(!e || !isEmail(e) || seen.has(e)) continue;
+      seen.add(e);
+      emails.push(e);
+    }
+    return emails;
+  }
+
+  function openOverlay(el){
+    el.classList.add('open');
+    el.setAttribute('aria-hidden','false');
+  }
+  function closeOverlay(el){
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden','true');
+  }
 
   // ---------- Data fetch ----------
   async function refresh(){
@@ -421,17 +610,18 @@
       : rows;
 
     // purge selection if row not visible anymore
-    const visibleIds = new Set(currentRows.map(r => r.id));
+    const visibleIds = new Set(currentRows.map(r => String(r.id)));
     for (const id of Array.from(selectedIds)) {
-      if (!visibleIds.has(id)) selectedIds.delete(id);
+      if (!visibleIds.has(String(id))) selectedIds.delete(id);
     }
 
     countPill.textContent = `${currentRows.length} inscrit(s)`;
 
     tbody.innerHTML = currentRows.map(r => {
-      const checked = selectedIds.has(r.id) ? 'checked' : '';
+      const rid = String(r.id);
+      const checked = selectedIds.has(rid) ? 'checked' : '';
       return `
-        <tr data-id="${r.id}">
+        <tr data-id="${rid}">
           <td><input class="cb rowcb" type="checkbox" ${checked} aria-label="Sélectionner"/></td>
           <td class="muted">${safeStr(r.detection_date)}</td>
           <td>${safeStr(r.last_name).toUpperCase()}</td>
@@ -441,24 +631,37 @@
           <td class="muted">${safeStr(r.phone)}</td>
           <td class="muted">${safeStr(r.city)}</td>
           <td class="muted">${safeStr(r.level)}</td>
+          <td>
+            <button class="miniAction viewBtn" type="button">Voir</button>
+          </td>
         </tr>
       `;
     }).join('');
 
-    // bind checkbox events
+    // bind events
     tbody.querySelectorAll('tr').forEach(tr => {
-      const id = tr.getAttribute('data-id');
+      const id = String(tr.getAttribute('data-id'));
       const cb = tr.querySelector('.rowcb');
+      const viewBtn = tr.querySelector('.viewBtn');
+
       cb.addEventListener('change', () => {
         if(cb.checked) selectedIds.add(id);
         else selectedIds.delete(id);
         updateSelectedUI();
       });
 
-      // click row toggles (except clicking checkbox directly)
+      viewBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const row = currentRows.find(x => String(x.id) === id);
+        if(row) openDetails(row);
+      });
+
+      // click row toggles selection (except clicking interactive elements)
       tr.addEventListener('click', (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName : '';
         if (e.target && e.target.classList && e.target.classList.contains('rowcb')) return;
-        if (e.target && e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+        if (tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
         cb.checked = !cb.checked;
         cb.dispatchEvent(new Event('change'));
       });
@@ -532,7 +735,6 @@
     } else {
       selectedIds.clear();
     }
-    // update checkboxes UI
     tbody.querySelectorAll('.rowcb').forEach(cb => cb.checked = selectAll.checked);
     updateSelectedUI();
   });
@@ -543,20 +745,179 @@
     window.open(`/api/export-pdf?date=${encodeURIComponent(date)}`, '_blank');
   });
 
+  // ---------- ✅ Emails ----------
+  function renderEmailsBox(){
+    const rows = rowsBySelectionOrVisible();
+    const emails = buildEmailList(rows);
+    const date = dateFilter.value;
+    const scope = (selectedIds.size > 0) ? `sélection (${emails.length})` : `visibles (${emails.length})`;
+
+    emailsBox.textContent = emails.length ? emails.join('\n') : '—';
+    mailtoBtn.disabled = emails.length === 0;
+
+    // petit toast d’info
+    showToast(`Emails prêts: ${scope} — ${date}`);
+  }
+
+  emailsBtn.addEventListener('click', () => {
+    renderEmailsBox();
+    openOverlay(emailsOverlay);
+  });
+
+  emailsClose.addEventListener('click', () => closeOverlay(emailsOverlay));
+  emailsOverlay.addEventListener('click', (e) => { if(e.target === emailsOverlay) closeOverlay(emailsOverlay); });
+
+  copyEmailsBtn.addEventListener('click', async () => {
+    const text = emailsBox.textContent.trim();
+    if(!text || text === '—'){ showToast("Rien à copier"); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Emails copiés ✅");
+    }catch{
+      showToast("Copie impossible (navigateur).");
+    }
+  });
+
+  function openMailtoBCC(){
+    const rows = rowsBySelectionOrVisible();
+    const emails = buildEmailList(rows);
+    if(!emails.length) return;
+
+    // ⚠️ mailto a une limite de longueur : au-delà, on conseille de copier/coller
+    const bcc = encodeURIComponent(emails.join(','));
+    const subject = encodeURIComponent("Fly Future Champions — Informations détection");
+    const body = encodeURIComponent(
+      "Bonjour,\n\n" +
+      "Voici un message groupé concernant la détection Fly Future Champions.\n\n" +
+      "—\nFly Future Champions"
+    );
+
+    const url = `mailto:?bcc=${bcc}&subject=${subject}&body=${body}`;
+    if (url.length > 1800){
+      showToast("Trop d'emails pour ouvrir en mailto. Copie la liste (bouton Copier).");
+      return;
+    }
+    window.location.href = url;
+  }
+
+  mailtoBtn.addEventListener('click', () => openMailtoBCC());
+
+  downloadEmailsBtn.addEventListener('click', () => {
+    const text = emailsBox.textContent.trim();
+    if(!text || text === '—'){ showToast("Rien à télécharger"); return; }
+    const blob = new Blob([text + '\n'], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `emails_${dateFilter.value}_${selectedIds.size>0?'selection':'visibles'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast("Téléchargé ✅");
+  });
+
+  // ---------- ✅ Details ----------
+  function kvRow(label, value){
+    const k = document.createElement('div'); k.className = 'k'; k.textContent = label;
+    const v = document.createElement('div'); v.className = 'v'; v.textContent = value || '—';
+    detailsKv.appendChild(k); detailsKv.appendChild(v);
+  }
+
+  function openDetails(r){
+    lastOpenedDetails = r;
+
+    const fullName = `${safeStr(r.first_name)} ${safeStr(r.last_name)}`.trim();
+    detailsTitle.textContent = `Inscription — ${fullName || 'Joueur'}`;
+    detailsSubtitle.textContent = `Détection: ${safeStr(r.detection_date)} • Créé: ${safeStr(r.created_at)}`;
+
+    detailsKv.innerHTML = '';
+
+    const parsed = parseNotes(r.notes);
+
+    kvRow('Nom', safeStr(r.last_name).toUpperCase());
+    kvRow('Prénom', safeStr(r.first_name));
+    kvRow('Date détection', safeStr(r.detection_date));
+    kvRow('Créé le', safeStr(r.created_at));
+    kvRow('Naissance (année)', safeStr(r.birth_year));
+    kvRow('Naissance (date)', parsed.naissance);
+    kvRow('Sexe', safeStr(r.gender));
+    kvRow('Poste', safeStr(r.position));
+    kvRow('Taille (cm)', safeStr(r.height_cm));
+    kvRow('Niveau', safeStr(r.level));
+    kvRow('Club', parsed.club);
+    kvRow('Objectif', parsed.objectif);
+    kvRow('Ville', safeStr(r.city));
+    kvRow('Email', safeStr(r.email));
+    kvRow('Téléphone', safeStr(r.phone));
+    kvRow('Message', parsed.message || safeStr(r.notes));
+
+    openOverlay(detailsOverlay);
+  }
+
+  detailsClose.addEventListener('click', ()=> closeOverlay(detailsOverlay));
+  detailsOverlay.addEventListener('click', (e)=>{ if(e.target === detailsOverlay) closeOverlay(detailsOverlay); });
+
+  copyDetailsBtn.addEventListener('click', async ()=>{
+    if(!lastOpenedDetails){ showToast("Aucun détail"); return; }
+    const r = lastOpenedDetails;
+    const parsed = parseNotes(r.notes);
+    const text =
+`Fly Future Champions — Inscription
+Détection: ${safeStr(r.detection_date)}
+Créé: ${safeStr(r.created_at)}
+
+Nom: ${safeStr(r.last_name)} 
+Prénom: ${safeStr(r.first_name)}
+Naissance (année): ${safeStr(r.birth_year)}
+Naissance (date): ${parsed.naissance || '—'}
+Sexe: ${safeStr(r.gender)}
+Poste: ${safeStr(r.position)}
+Taille: ${safeStr(r.height_cm)} cm
+Niveau: ${safeStr(r.level)}
+Club: ${parsed.club || '—'}
+Objectif: ${parsed.objectif || '—'}
+Ville: ${safeStr(r.city)}
+Email: ${safeStr(r.email)}
+Téléphone: ${safeStr(r.phone)}
+
+Message:
+${parsed.message || safeStr(r.notes) || '—'}
+`;
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Détails copiés ✅");
+    }catch{
+      showToast("Copie impossible (navigateur).");
+    }
+  });
+
+  emailOneBtn.addEventListener('click', ()=>{
+    if(!lastOpenedDetails){ showToast("Aucun joueur"); return; }
+    const r = lastOpenedDetails;
+    const to = safeStr(r.email).trim();
+    if(!to || !isEmail(to)){ showToast("Email invalide"); return; }
+
+    const subject = encodeURIComponent("Fly Future Champions — Détection");
+    const body = encodeURIComponent(
+      `Bonjour ${safeStr(r.first_name)},\n\n`+
+      `Merci pour ta pré-inscription à la détection du ${safeStr(r.detection_date)}.\n\n`+
+      `—\nFly Future Champions`
+    );
+    window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
+  });
+
   // ---------- Payments (Stripe Connect) ----------
   function openPaymentsModal(){
-    payOverlay.classList.add('open');
-    payOverlay.setAttribute('aria-hidden','false');
+    openOverlay(payOverlay);
   }
   function closePaymentsModal(){
-    payOverlay.classList.remove('open');
-    payOverlay.setAttribute('aria-hidden','true');
+    closeOverlay(payOverlay);
   }
   payClose.addEventListener('click', closePaymentsModal);
   payOverlay.addEventListener('click', (e) => { if(e.target === payOverlay) closePaymentsModal(); });
 
   async function loadStripeAccountId(){
-    // read from DB app_settings (created/updated by your stripe-connect-onboarding API)
     const { data, error } = await supabaseClient
       .from('app_settings')
       .select('value')
@@ -584,7 +945,6 @@
       showToast("Erreur paiements: " + (json.error||resp.status));
       return;
     }
-    // json.url + json.accountId
     if(json.accountId) stripeAccountBox.textContent = json.accountId;
     window.location.href = json.url;
   });
@@ -606,7 +966,8 @@
     return data?.session?.access_token || null;
   }
 
-  deleteSelectedBtn.addEventListener('click', async () => {
+  const deleteSelectedBtnEl = deleteSelectedBtn;
+  deleteSelectedBtnEl.addEventListener('click', async () => {
     if(selectedIds.size === 0) return;
 
     const date = dateFilter.value;
@@ -629,8 +990,6 @@
       return;
     }
 
-    // Option A: via API (recommandé) — si tu as /api/admin-delete-registrations
-    // Option B: fallback delete direct via Supabase (si tes RLS l'autorisent)
     let apiWorked = false;
 
     try{
@@ -648,7 +1007,6 @@
         apiWorked = true;
         showToast(`✅ Supprimé: ${json.deleted || list.length}`);
       } else {
-        // keep going fallback
         console.warn("API delete failed:", json);
       }
     }catch(e){
